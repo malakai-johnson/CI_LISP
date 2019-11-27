@@ -1,0 +1,1 @@
+/Library/Developer/CommandLineTools/usr/bin/cc -m64 -g -O0 -D_DEBUG -Wall -g -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX10.14.sdk -Wl,-search_paths_first -Wl,-headerpad_max_install_names  CMakeFiles/cilisp.dir/src/ciLisp.c.o CMakeFiles/cilisp.dir/ciLispScanner.c.o CMakeFiles/cilisp.dir/ciLispParser.c.o  -o cilisp -lm 

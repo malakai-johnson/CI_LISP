@@ -1,0 +1,191 @@
+Grammar
+
+    0 $accept: program $end
+
+    1 program: s_expr EOL
+
+    2 s_expr: number
+    3       | f_expr
+    4       | QUIT
+    5       | error
+
+    6 number: INT
+    7       | DOUBLE
+
+    8 f_expr: LPAREN FUNC s_expr RPAREN
+    9       | LPAREN FUNC s_expr s_expr RPAREN
+
+
+Terminals, with rules where they appear
+
+$end (0) 0
+error (256) 5
+FUNC (258) 8 9
+INT (259) 6
+DOUBLE (260) 7
+LPAREN (261) 8 9
+RPAREN (262) 8 9
+EOL (263) 1
+QUIT (264) 4
+
+
+Nonterminals, with rules where they appear
+
+$accept (10)
+    on left: 0
+program (11)
+    on left: 1, on right: 0
+s_expr (12)
+    on left: 2 3 4 5, on right: 1 8 9
+number (13)
+    on left: 6 7, on right: 2
+f_expr (14)
+    on left: 8 9, on right: 3
+
+
+state 0
+
+    0 $accept: . program $end
+
+    error   shift, and go to state 1
+    INT     shift, and go to state 2
+    DOUBLE  shift, and go to state 3
+    LPAREN  shift, and go to state 4
+    QUIT    shift, and go to state 5
+
+    program  go to state 6
+    s_expr   go to state 7
+    number   go to state 8
+    f_expr   go to state 9
+
+
+state 1
+
+    5 s_expr: error .
+
+    $default  reduce using rule 5 (s_expr)
+
+
+state 2
+
+    6 number: INT .
+
+    $default  reduce using rule 6 (number)
+
+
+state 3
+
+    7 number: DOUBLE .
+
+    $default  reduce using rule 7 (number)
+
+
+state 4
+
+    8 f_expr: LPAREN . FUNC s_expr RPAREN
+    9       | LPAREN . FUNC s_expr s_expr RPAREN
+
+    FUNC  shift, and go to state 10
+
+
+state 5
+
+    4 s_expr: QUIT .
+
+    $default  reduce using rule 4 (s_expr)
+
+
+state 6
+
+    0 $accept: program . $end
+
+    $end  shift, and go to state 11
+
+
+state 7
+
+    1 program: s_expr . EOL
+
+    EOL  shift, and go to state 12
+
+
+state 8
+
+    2 s_expr: number .
+
+    $default  reduce using rule 2 (s_expr)
+
+
+state 9
+
+    3 s_expr: f_expr .
+
+    $default  reduce using rule 3 (s_expr)
+
+
+state 10
+
+    8 f_expr: LPAREN FUNC . s_expr RPAREN
+    9       | LPAREN FUNC . s_expr s_expr RPAREN
+
+    error   shift, and go to state 1
+    INT     shift, and go to state 2
+    DOUBLE  shift, and go to state 3
+    LPAREN  shift, and go to state 4
+    QUIT    shift, and go to state 5
+
+    s_expr  go to state 13
+    number  go to state 8
+    f_expr  go to state 9
+
+
+state 11
+
+    0 $accept: program $end .
+
+    $default  accept
+
+
+state 12
+
+    1 program: s_expr EOL .
+
+    $default  reduce using rule 1 (program)
+
+
+state 13
+
+    8 f_expr: LPAREN FUNC s_expr . RPAREN
+    9       | LPAREN FUNC s_expr . s_expr RPAREN
+
+    error   shift, and go to state 1
+    INT     shift, and go to state 2
+    DOUBLE  shift, and go to state 3
+    LPAREN  shift, and go to state 4
+    RPAREN  shift, and go to state 14
+    QUIT    shift, and go to state 5
+
+    s_expr  go to state 15
+    number  go to state 8
+    f_expr  go to state 9
+
+
+state 14
+
+    8 f_expr: LPAREN FUNC s_expr RPAREN .
+
+    $default  reduce using rule 8 (f_expr)
+
+
+state 15
+
+    9 f_expr: LPAREN FUNC s_expr s_expr . RPAREN
+
+    RPAREN  shift, and go to state 16
+
+
+state 16
+
+    9 f_expr: LPAREN FUNC s_expr s_expr RPAREN .
+
+    $default  reduce using rule 9 (f_expr)

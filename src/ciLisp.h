@@ -23,17 +23,18 @@ typedef enum oper {
     ABS_OPER,
     EXP_OPER,
     SQRT_OPER,
+    LOG_OPER,
+    EXP2_OPER,
+    CBRT_OPER,
+//              single op < ADD_OPER <= double op
     ADD_OPER,
     SUB_OPER,
     MULT_OPER,
     DIV_OPER,
     REMAINDER_OPER,
-    LOG_OPER,
     POW_OPER,
     MAX_OPER,
     MIN_OPER,
-    EXP2_OPER,
-    CBRT_OPER,
     HYPOT_OPER,
     READ_OPER,
     RAND_OPER,
@@ -98,6 +99,8 @@ void freeNode(AST_NODE *node);
 RET_VAL eval(AST_NODE *node);
 RET_VAL evalNumNode(AST_NODE *node);
 RET_VAL evalFuncNode(AST_NODE *node);
+
+OPER_TYPE getOperType(char *funcName);
 
 void printRetVal(RET_VAL val);
 

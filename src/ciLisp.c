@@ -13,17 +13,18 @@ char *funcNames[] = {
         "abs",
         "exp",
         "sqrt",
+        "log",
+        "exp2",
+        "cbrt",
+
         "add",
         "sub",
         "mult",
         "div",
         "remainder",
-        "log",
         "pow",
         "max",
         "min",
-        "exp2",
-        "cbrt",
         "hypot",
         "read",
         "rand",
@@ -61,7 +62,10 @@ AST_NODE *createNumberNode(double value, NUM_TYPE type)
     if ((node = calloc(nodeSize, 1)) == NULL)
         yyerror("Memory allocation failed!");
 
-    // TODO set the AST_NODE's type, assign values to contained NUM_AST_NODE
+    // TODO done?     *createNumberNode:      set the AST_NODE's type, assign values to contained NUM_AST_NODE
+    node->type = NUM_NODE_TYPE;
+    node->data.number.value = value;
+    node->data.number.type = type;
 
     return node;
 }
@@ -83,15 +87,27 @@ AST_NODE *createFunctionNode(char *funcName, AST_NODE *op1, AST_NODE *op2)
     if ((node = calloc(nodeSize, 1)) == NULL)
         yyerror("Memory allocation failed!");
 
-    // TODO set the AST_NODE's type, populate contained FUNC_AST_NODE
+    // TODO done?     *createFunctionNode:    set the AST_NODE's type, populate contained FUNC_AST_NODE
     // NOTE: you do not need to populate the "ident" field unless the function is type CUSTOM_OPER.
     // When you do have a CUSTOM_OPER, you do NOT need to allocate and strcpy here.
     // The funcName will be a string identifier for which space should be allocated in the tokenizer.
     // For CUSTOM_OPER functions, you should simply assign the "ident" pointer to the passed in funcName.
     // For functions other than CUSTOM_OPER, you should free the funcName after you're assigned the OPER_TYPE.
 
+    node->type = FUNC_NODE_TYPE;
+
+    node->data.function.oper = resolveFunc(funcName);
+
+    if (node->data.function.oper == CUSTOM_OPER)
+        node->data.function.ident = funcName;
+
+
+    node->data.function.op1 = op1;
+    node->data.function.op2 = op2;
+
     return node;
 }
+
 
 // Called after execution is done on the base of the tree.
 // (see the program production in ciLisp.y)
@@ -129,11 +145,17 @@ RET_VAL eval(AST_NODE *node)
 
     RET_VAL result = {INT_TYPE, NAN}; // see NUM_AST_NODE, because RET_VAL is just an alternative name for it.
 
-    // TODO complete the switch.
+    // TODO done?     eval:                             complete the switch.
     // Make calls to other eval functions based on node type.
     // Use the results of those calls to populate result.
     switch (node->type)
     {
+        case NUM_NODE_TYPE:
+            result = evalNumNode(node);
+            break;
+        case FUNC_NODE_TYPE:
+            result = evalFuncNode(node);
+            break;
         default:
             yyerror("Invalid AST_NODE_TYPE, probably invalid writes somewhere!");
     }
@@ -150,9 +172,11 @@ RET_VAL evalNumNode(AST_NODE *node)
 
     RET_VAL result = {INT_TYPE, NAN};
 
-    // TODO populate result with the values stored in the node.
+    // TODO done?     evalNumNode:              populate result with the values stored in the node.
     // SEE: AST_NODE, AST_NODE_TYPE, NUM_AST_NODE
 
+    result.value = node->data.number.value;
+    result.type = node->data.number.type;
 
     return result;
 }
@@ -165,9 +189,126 @@ RET_VAL evalFuncNode(AST_NODE *node)
 
     RET_VAL result = {INT_TYPE, NAN};
 
-    // TODO populate result with the result of running the function on its operands.
+    double op1;
+    double op2;
+
+//    if(node->data.function.op1->type == FUNC_NODE_TYPE){
+//        RET_VAL temp = evalFuncNode(node->data.function.op1);
+//        node->data.function.op1->data.number.value = temp.value;
+//        node->data.function.op1->data.number.type = temp.type;
+//    }
+//
+//    if(node->data.function.op2->type == FUNC_NODE_TYPE){
+//        RET_VAL temp = evalFuncNode(node->data.function.op1);
+//        node->data.function.op2->data.number.value = temp.value;
+//        node->data.function.op2->data.number.type = temp.type;
+//    }
+
+    if(node->data.function.op1->type == FUNC_NODE_TYPE){
+        RET_VAL temp = evalFuncNode(node->data.function.op1);
+        node->data.function.op1->data.number.value = temp.value;
+        node->data.function.op1->data.number.type = temp.type;
+    }
+
+    op1 = node->data.function.op1->data.number.value;
+
+    if(node->data.function.oper >= ADD_OPER) {
+        // If binary func
+        if(node->data.function.op2->type == FUNC_NODE_TYPE){
+            RET_VAL temp = evalFuncNode(node->data.function.op2);
+            node->data.function.op2->data.number.value = temp.value;
+            node->data.function.op2->data.number.type = temp.type;
+        }
+
+        op2 = node->data.function.op2->data.number.value;
+        result.type = node->data.function.op1->data.number.type || node->data.function.op2->data.number.type;
+    }else {
+        //if unary func
+        result.type = node->data.function.op1->data.number.type;
+    }
+
+
+    // TODO     evalFuncNode:             populate result with the result of running the function on its operands.
     // SEE: AST_NODE, AST_NODE_TYPE, FUNC_AST_NODE
 
+    switch (node->data.function.oper){
+        case NEG_OPER:
+            result.value = -1 * op1;
+            break;
+        case ABS_OPER:
+            result.value = fabs(op1);
+            break;
+        case EXP_OPER:
+            result.value = exp(op1);
+            break;
+        case SQRT_OPER:
+            result.value = sqrt(op1);
+            break;
+        case LOG_OPER:
+            result.value = log(op1);
+            break;
+        case EXP2_OPER:
+            result.value = exp2(op1);
+            break;
+        case CBRT_OPER:
+            result.value = cbrt(op1);
+            break;
+
+        case ADD_OPER:
+            result.value = op1 + op2;
+            break;
+        case SUB_OPER:
+            result.value = op1 - op2;
+            break;
+        case MULT_OPER:
+            result.value = op1 * op2;
+            break;
+        case DIV_OPER:
+            result.value = op1 / op2;
+            break;
+        case REMAINDER_OPER:
+            result.value = remainder(op1, op2);
+            break;
+        case POW_OPER:
+            result.value = pow(op1, op2);
+            break;
+        case MAX_OPER:
+            result.value = fmax(op1, op2);
+            break;
+        case MIN_OPER:
+            result.value = fmin(op1, op2);
+            break;
+        case HYPOT_OPER:
+            result.value = hypot(op1, op2);
+            break;
+//        case READ_OPER:
+//            result.value =
+//            break;
+//        case RAND_OPER:
+//            result.value =
+//            break;
+//        case PRINT_OPER:
+//            result.value =
+//            break;
+//        case EQUAL_OPER:
+//            result.value =
+//            break;
+//        case LESS_OPER:
+//            result.value =
+//            break;
+//        case GREATER_OPER:
+//            result.value =
+//            break;
+//        case CUSTOM_OPER:
+//            result.value =
+//            break;
+
+    }
+
+
+
+    if(result.type == INT_TYPE)
+        result.value = round(result.value);
 
     return result;
 }
@@ -175,5 +316,16 @@ RET_VAL evalFuncNode(AST_NODE *node)
 // prints the type and value of a RET_VAL
 void printRetVal(RET_VAL val)
 {
-    // TODO print the type and value of the value passed in.
+    // TODO done?     printRetVal:                 print the type and value of the value passed in.
+    switch (val.type){
+        case INT_TYPE:
+            printf("INT_TYPE: %ld", (long)floor(val.value) );
+            break;
+        case DOUBLE_TYPE:
+            printf("DOUBLE_TYPE: %f", val.value);
+            break;
+        default:
+            yyerror("Invalid Type Error in printRetVal");
+            break;
+    }
 }
