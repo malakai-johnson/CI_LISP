@@ -108,6 +108,10 @@ AST_NODE *createFunctionNode(char *funcName, AST_NODE *op1, AST_NODE *op2)
     return node;
 }
 
+AST_NODE *createSymbolNode(){
+    //TODO createSymbolNode
+}
+
 
 // Called after execution is done on the base of the tree.
 // (see the program production in ciLisp.y)
@@ -192,17 +196,6 @@ RET_VAL evalFuncNode(AST_NODE *node)
     double op1;
     double op2;
 
-//    if(node->data.function.op1->type == FUNC_NODE_TYPE){
-//        RET_VAL temp = evalFuncNode(node->data.function.op1);
-//        node->data.function.op1->data.number.value = temp.value;
-//        node->data.function.op1->data.number.type = temp.type;
-//    }
-//
-//    if(node->data.function.op2->type == FUNC_NODE_TYPE){
-//        RET_VAL temp = evalFuncNode(node->data.function.op1);
-//        node->data.function.op2->data.number.value = temp.value;
-//        node->data.function.op2->data.number.type = temp.type;
-//    }
 
     if(node->data.function.op1->type == FUNC_NODE_TYPE){
         RET_VAL temp = evalFuncNode(node->data.function.op1);

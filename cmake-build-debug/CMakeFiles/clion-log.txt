@@ -1,4 +1,4 @@
-/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /Users/malakai.johnson642/Documents/COMP-232/CiLisp/Task-1/CI_LISP-Task-1
+/Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /Users/malakai.johnson642/Documents/COMP-232/CiLisp/CI_LISP-Task-2
 -- The C compiler identification is AppleClang 10.0.1.10010046
 -- The CXX compiler identification is AppleClang 10.0.1.10010046
 -- Check for working C compiler: /Library/Developer/CommandLineTools/usr/bin/cc
@@ -17,4 +17,4 @@
 -- Found FLEX: /usr/bin/flex (found version "2.5.35") 
 -- Configuring done
 -- Generating done
--- Build files have been written to: /Users/malakai.johnson642/Documents/COMP-232/CiLisp/Task-1/CI_LISP-Task-1/cmake-build-debug
+-- Build files have been written to: /Users/malakai.johnson642/Documents/COMP-232/CiLisp/CI_LISP-Task-2/cmake-build-debug
