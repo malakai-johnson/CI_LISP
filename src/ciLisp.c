@@ -62,7 +62,6 @@ AST_NODE *createNumberNode(double value, NUM_TYPE type)
     if ((node = calloc(nodeSize, 1)) == NULL)
         yyerror("Memory allocation failed!");
 
-    // TODO done?     *createNumberNode:      set the AST_NODE's type, assign values to contained NUM_AST_NODE
     node->type = NUM_NODE_TYPE;
     node->data.number.value = value;
     node->data.number.type = type;
@@ -87,7 +86,6 @@ AST_NODE *createFunctionNode(char *funcName, AST_NODE *op1, AST_NODE *op2)
     if ((node = calloc(nodeSize, 1)) == NULL)
         yyerror("Memory allocation failed!");
 
-    // TODO done?     *createFunctionNode:    set the AST_NODE's type, populate contained FUNC_AST_NODE
     // NOTE: you do not need to populate the "ident" field unless the function is type CUSTOM_OPER.
     // When you do have a CUSTOM_OPER, you do NOT need to allocate and strcpy here.
     // The funcName will be a string identifier for which space should be allocated in the tokenizer.
@@ -105,11 +103,56 @@ AST_NODE *createFunctionNode(char *funcName, AST_NODE *op1, AST_NODE *op2)
     node->data.function.op1 = op1;
     node->data.function.op2 = op2;
 
+
     return node;
 }
 
-AST_NODE *createSymbolNode(){
+AST_NODE *createSymbolNode(char *ident){
+    AST_NODE *node;
+    size_t nodeSize = sizeof(AST_NODE);
+    if ((node = calloc(nodeSize, 1)) == NULL)
+        yyerror("Memory allocation failed!");
+
+
+}
+
+AST_NODE *createSymbolTable(SYMBOL_TABLE_NODE *symbol, AST_NODE *node){
+    node->symbolTable = symbol;
+}
+
+SYMBOL_TABLE_NODE *createSymbolTableNode(char *ident, AST_NODE *valueNode){
     //TODO createSymbolNode
+    SYMBOL_TABLE_NODE *node;
+    size_t nodeSize = sizeof(SYMBOL_TABLE_NODE);
+    if ((node = calloc(nodeSize, 1)) == NULL)
+        yyerror("Memory allocation failed!");
+
+    node->ident = ident;
+    node->val = valueNode;
+    node->next = NULL;
+
+}
+
+SYMBOL_TABLE_NODE *addToSymbolTable(SYMBOL_TABLE_NODE *parentNode, SYMBOL_TABLE_NODE *newNode){
+
+    if(parentNode->ident == newNode->ident){
+        yyerror("Conflicting Symbol Definition");
+    }
+
+    while(parentNode->next != NULL){
+        parentNode = parentNode->next;
+        if(parentNode->ident == newNode->ident){
+            yyerror("Conflicting Symbol Definition");
+        }
+    }
+    parentNode->next = newNode;
+
+//    if(parentNode->next == NULL){
+//        parentNode->next = &newNode;
+//    }else{
+//        addToSymbolTable(parentNode->next, newNode);
+//    }
+//    return parentNode;
 }
 
 
@@ -149,7 +192,6 @@ RET_VAL eval(AST_NODE *node)
 
     RET_VAL result = {INT_TYPE, NAN}; // see NUM_AST_NODE, because RET_VAL is just an alternative name for it.
 
-    // TODO done?     eval:                             complete the switch.
     // Make calls to other eval functions based on node type.
     // Use the results of those calls to populate result.
     switch (node->type)
@@ -160,6 +202,8 @@ RET_VAL eval(AST_NODE *node)
         case FUNC_NODE_TYPE:
             result = evalFuncNode(node);
             break;
+        case SYMBOL_TABLE_NODE_TYPE:
+            result = evalSymbolTableNode(node);
         default:
             yyerror("Invalid AST_NODE_TYPE, probably invalid writes somewhere!");
     }
@@ -176,7 +220,6 @@ RET_VAL evalNumNode(AST_NODE *node)
 
     RET_VAL result = {INT_TYPE, NAN};
 
-    // TODO done?     evalNumNode:              populate result with the values stored in the node.
     // SEE: AST_NODE, AST_NODE_TYPE, NUM_AST_NODE
 
     result.value = node->data.number.value;
@@ -306,10 +349,24 @@ RET_VAL evalFuncNode(AST_NODE *node)
     return result;
 }
 
+RET_VAL evalSymbolNode(AST_NODE *node){
+    //TODO evalSymbolNode
+
+    if(!node)
+        return (RET_VAL){INT_TYPE, NAN};
+
+    RET_VAL result = {INT_TYPE, NAN};
+
+    char *temp = node->parent->symbolTable->ident;
+
+    while(node->data.symbol.ident != temp){
+
+    }
+}
+
 // prints the type and value of a RET_VAL
 void printRetVal(RET_VAL val)
 {
-    // TODO done?     printRetVal:                 print the type and value of the value passed in.
     switch (val.type){
         case INT_TYPE:
             printf("INT_TYPE: %ld", (long)floor(val.value) );

@@ -33,13 +33,13 @@ s_expr:
     | f_expr {
         $$ = $1;
     }
+    | let_section{
+    	fprintf(stderr, "yacc: s_expr ::= LPAREN let_section s_expr RPAREN\n");
+    	$$ = $1;
+    }
     | SYMBOL {
     	fprintf(stderr, "yacc: s_expr ::= symbol\n");
-    	$$ = 1;
-    }
-    | LPAREN let_section s_expr RPAREN{
-    	fprintf(stderr, "yacc: s_expr ::= LPAREN let_section s_expr RPAREN\n");
-    	$$ = createLetScope($2, $3);
+    	$$ = createSymbolNode($1);
     }
     | QUIT {
         fprintf(stderr, "yacc: s_expr ::= QUIT\n");
@@ -72,23 +72,24 @@ f_expr:
     };
 
 let_section:
-	LPAREN let_list RPAREN {
+	LPAREN let_list s_expr RPAREN {
         	fprintf(stderr, "yacc: let_section ::= LPAREN let_list RPAREN\n");
-//		$$ =
+		$$ = createSymbolTable($2, $3);
 	};
 let_list:
 	LET let_elem {
         	fprintf(stderr, "yacc: let_list ::= let let_elem\n");
-//		$$ =
+		$$ = $2;
 	}
 	| let_list let_elem {
         	fprintf(stderr, "yacc: let_list ::= let_list let_elem\n");
-//		$$ =
+        	addToSymbolTable($1, $2);
+		$$ = $1;
 	};
 let_elem:
 	LPAREN SYMBOL s_expr RPAREN {
 		fprintf(stderr, "yacc: let_elem ::= LPAREN SYMBOL s_expr RPAREN\n");
-		$$ = createSymbolNode($2, $3);
+		$$ = createSymbolTableNode($2, $3);
 	};
 
 
