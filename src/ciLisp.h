@@ -53,7 +53,7 @@ OPER_TYPE resolveFunc(char *);
 typedef enum {
     NUM_NODE_TYPE,
     FUNC_NODE_TYPE,
-    SYMBOL_TABLE_NODE_TYPE
+    SYMBOL_NODE_TYPE
 } AST_NODE_TYPE;
 
 // Types of numeric values
@@ -105,9 +105,10 @@ typedef struct ast_node {
 } AST_NODE;
 
 AST_NODE *createNumberNode(double value, NUM_TYPE type);
-
+AST_NODE *createSymbolNode(char *ident);
 AST_NODE *createFunctionNode(char *funcName, AST_NODE *op1, AST_NODE *op2);
 
+AST_NODE *addSymbolTable(SYMBOL_TABLE_NODE *symbolTable, AST_NODE *node);
 SYMBOL_TABLE_NODE *createSymbolTableNode(char *ident, AST_NODE *valueNode);
 SYMBOL_TABLE_NODE *addToSymbolTable(SYMBOL_TABLE_NODE *headNode, SYMBOL_TABLE_NODE *newNode);
 
@@ -116,7 +117,7 @@ void freeNode(AST_NODE *node);
 RET_VAL eval(AST_NODE *node);
 RET_VAL evalNumNode(AST_NODE *node);
 RET_VAL evalFuncNode(AST_NODE *node);
-RET_VAL evalSymbolTableNode(AST_NODE *node);
+RET_VAL evalSymbolNode(AST_NODE *node);
 
 
 OPER_TYPE getOperType(char *funcName);

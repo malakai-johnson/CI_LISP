@@ -71,9 +71,10 @@ typedef union YYSTYPE
     double dval;
     char *sval;
     struct ast_node *astNode;
+    struct symbol_table_node *symbolTableNode;
 }
 /* Line 1529 of yacc.c.  */
-#line 77 "/Users/malakai.johnson642/Documents/COMP-232/CiLisp/CI_LISP-Task-2/cmake-build-debug/ciLispParser.h"
+#line 78 "/Users/malakai.johnson642/Documents/COMP-232/CiLisp/CI_LISP-Task-2/cmake-build-debug/ciLispParser.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1

@@ -98,10 +98,25 @@ AST_NODE *createFunctionNode(char *funcName, AST_NODE *op1, AST_NODE *op2)
 
     if (node->data.function.oper == CUSTOM_OPER)
         node->data.function.ident = funcName;
+    else
+        free (funcName);
 
+    if(op1 != NULL){
+        op1->parent = node;
+    }
+    if(op2 != NULL){
+        op2->parent = node;
+    }
 
     node->data.function.op1 = op1;
     node->data.function.op2 = op2;
+
+//    if(node->data.function.op1 != NULL){
+//        node->data.function.op1->parent = node;
+//    }
+//    if(node->data.function.op2 != NULL){
+//        node->data.function.op2->parent = node;
+//    }
 
 
     return node;
@@ -113,11 +128,17 @@ AST_NODE *createSymbolNode(char *ident){
     if ((node = calloc(nodeSize, 1)) == NULL)
         yyerror("Memory allocation failed!");
 
+    node->type = SYMBOL_NODE_TYPE;
+//    node->parent = NULL;
+    node->data.symbol.ident = ident;
 
+    return node;
 }
 
-AST_NODE *createSymbolTable(SYMBOL_TABLE_NODE *symbol, AST_NODE *node){
-    node->symbolTable = symbol;
+AST_NODE *addSymbolTable(SYMBOL_TABLE_NODE *symbolTable, AST_NODE *node){
+    node->symbolTable = symbolTable;
+//    node->symbolTable->val->parent = node;
+    return node;
 }
 
 SYMBOL_TABLE_NODE *createSymbolTableNode(char *ident, AST_NODE *valueNode){
@@ -202,8 +223,8 @@ RET_VAL eval(AST_NODE *node)
         case FUNC_NODE_TYPE:
             result = evalFuncNode(node);
             break;
-        case SYMBOL_TABLE_NODE_TYPE:
-            result = evalSymbolTableNode(node);
+        case SYMBOL_NODE_TYPE:
+            result = evalSymbolNode(node);
         default:
             yyerror("Invalid AST_NODE_TYPE, probably invalid writes somewhere!");
     }
@@ -236,32 +257,41 @@ RET_VAL evalFuncNode(AST_NODE *node)
 
     RET_VAL result = {INT_TYPE, NAN};
 
-    double op1;
-    double op2;
+    RET_VAL op1 = {INT_TYPE, NAN};
+    RET_VAL op2 = {INT_TYPE, NAN};
 
 
-    if(node->data.function.op1->type == FUNC_NODE_TYPE){
-        RET_VAL temp = evalFuncNode(node->data.function.op1);
-        node->data.function.op1->data.number.value = temp.value;
-        node->data.function.op1->data.number.type = temp.type;
+//    if(node->data.function.op1->type == FUNC_NODE_TYPE){
+//        RET_VAL temp = evalFuncNode(node->data.function.op1);
+//        node->data.function.op1->data.number.value = temp.value;
+//        node->data.function.op1->data.number.type = temp.type;
+//    }
+//
+//    op1 = node->data.function.op1->data.number.value;
+
+    if(node->data.function.op1 != NULL) {
+        op1 = eval(node->data.function.op1);
+        result.type = op1.type;
+    }
+    if(node->data.function.op2 != NULL){
+        op2 = eval(node->data.function.op2);
+        result.type = op1.type || op2.type;
     }
 
-    op1 = node->data.function.op1->data.number.value;
-
-    if(node->data.function.oper >= ADD_OPER) {
-        // If binary func
-        if(node->data.function.op2->type == FUNC_NODE_TYPE){
-            RET_VAL temp = evalFuncNode(node->data.function.op2);
-            node->data.function.op2->data.number.value = temp.value;
-            node->data.function.op2->data.number.type = temp.type;
-        }
-
-        op2 = node->data.function.op2->data.number.value;
-        result.type = node->data.function.op1->data.number.type || node->data.function.op2->data.number.type;
-    }else {
-        //if unary func
-        result.type = node->data.function.op1->data.number.type;
-    }
+//    if(node->data.function.oper >= ADD_OPER) {
+//        // If binary func
+////        if(node->data.function.op2->type == FUNC_NODE_TYPE){
+////            RET_VAL temp = evalFuncNode(node->data.function.op2);
+////            node->data.function.op2->data.number.value = temp.value;
+////            node->data.function.op2->data.number.type = temp.type;
+////        }
+//
+//        op2 = eval(node->data.function.op2);
+//        result.type = node->data.function.op1->data.number.type || node->data.function.op2->data.number.type;
+//    }else {
+//        //if unary func
+//        result.type = node->data.function.op1->data.number.type;
+//    }
 
 
     // TODO     evalFuncNode:             populate result with the result of running the function on its operands.
@@ -269,53 +299,53 @@ RET_VAL evalFuncNode(AST_NODE *node)
 
     switch (node->data.function.oper){
         case NEG_OPER:
-            result.value = -1 * op1;
+            result.value = -1 * op1.value;
             break;
         case ABS_OPER:
-            result.value = fabs(op1);
+            result.value = fabs(op1.value);
             break;
         case EXP_OPER:
-            result.value = exp(op1);
+            result.value = exp(op1.value);
             break;
         case SQRT_OPER:
-            result.value = sqrt(op1);
+            result.value = sqrt(op1.value);
             break;
         case LOG_OPER:
-            result.value = log(op1);
+            result.value = log(op1.value);
             break;
         case EXP2_OPER:
-            result.value = exp2(op1);
+            result.value = exp2(op1.value);
             break;
         case CBRT_OPER:
-            result.value = cbrt(op1);
+            result.value = cbrt(op1.value);
             break;
 
         case ADD_OPER:
-            result.value = op1 + op2;
+            result.value = op1.value + op2.value;
             break;
         case SUB_OPER:
-            result.value = op1 - op2;
+            result.value = op1.value - op2.value;
             break;
         case MULT_OPER:
-            result.value = op1 * op2;
+            result.value = op1.value * op2.value;
             break;
         case DIV_OPER:
-            result.value = op1 / op2;
+            result.value = op1.value / op2.value;
             break;
         case REMAINDER_OPER:
-            result.value = remainder(op1, op2);
+            result.value = remainder(op1.value, op2.value);
             break;
         case POW_OPER:
-            result.value = pow(op1, op2);
+            result.value = pow(op1.value, op2.value);
             break;
         case MAX_OPER:
-            result.value = fmax(op1, op2);
+            result.value = fmax(op1.value, op2.value);
             break;
         case MIN_OPER:
-            result.value = fmin(op1, op2);
+            result.value = fmin(op1.value, op2.value);
             break;
         case HYPOT_OPER:
-            result.value = hypot(op1, op2);
+            result.value = hypot(op1.value, op2.value);
             break;
 //        case READ_OPER:
 //            result.value =
@@ -344,24 +374,40 @@ RET_VAL evalFuncNode(AST_NODE *node)
 
 
     if(result.type == INT_TYPE)
-        result.value = round(result.value);
+        result.value = floor(result.value);
 
     return result;
 }
 
-RET_VAL evalSymbolNode(AST_NODE *node){
+RET_VAL evalSymbolNode(AST_NODE *symbolNode){
     //TODO evalSymbolNode
 
-    if(!node)
+    if(!symbolNode)
         return (RET_VAL){INT_TYPE, NAN};
 
     RET_VAL result = {INT_TYPE, NAN};
 
-    char *temp = node->parent->symbolTable->ident;
+    SYMBOL_TABLE_NODE *tempTableNode;
+//    size_t tempSize = sizeof(SYMBOL_TABLE_NODE);
+//    if ((tempTableNode = calloc(tempSize, 1)) == NULL)
+//        yyerror("Memory allocation failed!");
 
-    while(node->data.symbol.ident != temp){
+    while (symbolNode->parent != NULL && result.value == NAN) {
+        tempTableNode = symbolNode->parent->symbolTable;
 
+        while (tempTableNode != NULL && symbolNode->data.symbol.ident != tempTableNode->ident) {
+            tempTableNode = tempTableNode->next;
+        }
+        if (tempTableNode != NULL) {
+            result = eval(tempTableNode->val);
+        }
     }
+
+    if(result.value == NAN){
+        printf("ERROR: Invalid Symbol");
+    }
+
+    return result;
 }
 
 // prints the type and value of a RET_VAL

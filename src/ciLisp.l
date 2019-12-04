@@ -11,6 +11,7 @@ letter [a-zA-Z]
 int [+-]?{digit}+
 double [+-]?{digit}+\.{digit}*
 func "neg"|"abs"|"exp"|"sqrt"|"add"|"sub"|"mult"|"div"|"remainder"|"log"|"pow"|"max"|"min"
+symbol {letter}+
 
 %%
 
@@ -26,6 +27,13 @@ func "neg"|"abs"|"exp"|"sqrt"|"add"|"sub"|"mult"|"div"|"remainder"|"log"|"pow"|"
     return DOUBLE;
 }
 
+"let" {
+
+        yylval.dval = strtod(yytext, NULL);
+        fprintf(stderr, "lex: LET\n");
+        return LET;
+    }
+
 "quit" {
     return QUIT;
     }
@@ -37,11 +45,7 @@ func "neg"|"abs"|"exp"|"sqrt"|"add"|"sub"|"mult"|"div"|"remainder"|"log"|"pow"|"
     return FUNC;
     }
 
-"let" {
-        return LET;
-    }
-
-letter+ {
+{symbol} {
     yylval.sval = (char *) malloc(strlen(yytext)*sizeof(char)+1);
     strcpy(yylval.sval, yytext);
     fprintf(stderr, "lex: SYMBOL sval = %s\n", yylval.sval);
