@@ -26,7 +26,9 @@ typedef enum oper {
     LOG_OPER,
     EXP2_OPER,
     CBRT_OPER,
-//              single op < ADD_OPER <= double op
+    PRINT_OPER,
+
+    //              single op < ADD_OPER <= double op
     ADD_OPER,
     SUB_OPER,
     MULT_OPER,
@@ -38,7 +40,6 @@ typedef enum oper {
     HYPOT_OPER,
     READ_OPER,
     RAND_OPER,
-    PRINT_OPER,
     EQUAL_OPER,
     LESS_OPER,
     GREATER_OPER,
@@ -52,20 +53,28 @@ OPER_TYPE resolveFunc(char *);
 // You will expand this enum as you build the project.
 typedef enum {
     NUM_NODE_TYPE,
-    FUNC_NODE_TYPE
+    FUNC_NODE_TYPE,
+    SYMBOL_NODE_TYPE
 } AST_NODE_TYPE;
 
 // Types of numeric values
 typedef enum {
     INT_TYPE = 0,
-    DOUBLE_TYPE
+    DOUBLE_TYPE,
+    NO_TYPE
 } NUM_TYPE;
+
+NUM_TYPE resolveType(char*);
 
 // Node to store a number.
 typedef struct {
     NUM_TYPE type;
     double value;
 } NUM_AST_NODE;
+
+typedef struct symbol_ast_node {
+    char *ident;
+} SYMBOL_AST_NODE;
 
 // Values returned by eval function will be numbers with a type.
 // They have the same structure as a NUM_AST_NODE.
@@ -80,25 +89,41 @@ typedef struct {
     struct ast_node *op2;
 } FUNC_AST_NODE;
 
+typedef struct symbol_table_node {
+    char *ident;
+    NUM_TYPE type;
+    struct ast_node *val;
+    struct symbol_table_node *next;
+} SYMBOL_TABLE_NODE;
+
 // Generic Abstract Syntax Tree node. Stores the type of node,
 // and reference to the corresponding specific node (initially a number or function call).
 typedef struct ast_node {
     AST_NODE_TYPE type;
+    SYMBOL_TABLE_NODE *symbolTable;
+    struct ast_node *parent;
     union {
         NUM_AST_NODE number;
         FUNC_AST_NODE function;
+        SYMBOL_AST_NODE symbol;
     } data;
 } AST_NODE;
 
 AST_NODE *createNumberNode(double value, NUM_TYPE type);
-
+AST_NODE *createSymbolNode(char *ident);
 AST_NODE *createFunctionNode(char *funcName, AST_NODE *op1, AST_NODE *op2);
+
+AST_NODE *addSymbolTable(SYMBOL_TABLE_NODE *symbolTable, AST_NODE *node);
+SYMBOL_TABLE_NODE *createSymbolTableNode(char *ident, AST_NODE *valueNode, NUM_TYPE type);
+SYMBOL_TABLE_NODE *addToSymbolTable(SYMBOL_TABLE_NODE *headNode, SYMBOL_TABLE_NODE *newNode);
 
 void freeNode(AST_NODE *node);
 
 RET_VAL eval(AST_NODE *node);
 RET_VAL evalNumNode(AST_NODE *node);
 RET_VAL evalFuncNode(AST_NODE *node);
+RET_VAL evalSymbolNode(AST_NODE *node);
+
 
 OPER_TYPE getOperType(char *funcName);
 

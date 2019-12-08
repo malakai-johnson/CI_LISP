@@ -6,5 +6,5 @@ C_FLAGS = -m64 -g -O0 -D_DEBUG -Wall -g -isysroot /Library/Developer/CommandLine
 
 C_DEFINES = 
 
-C_INCLUDES = -I/Users/malakai.johnson642/Documents/COMP-232/CiLisp/Task-1/CI_LISP-Task-1/src -I/Users/malakai.johnson642/Documents/COMP-232/CiLisp/Task-1/CI_LISP-Task-1/cmake-build-debug 
+C_INCLUDES = -I/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-2/src -I/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-2/cmake-build-debug 
 
