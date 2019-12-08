@@ -43,10 +43,10 @@ RM = /Applications/CLion.app/Contents/bin/cmake/mac/bin/cmake -E remove -f
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-2
+CMAKE_SOURCE_DIR = /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-2/cmake-build-debug
+CMAKE_BINARY_DIR = /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug
 
 # Include any dependencies generated for this target.
 include CMakeFiles/cilisp.dir/depend.make
@@ -58,8 +58,8 @@ include CMakeFiles/cilisp.dir/progress.make
 include CMakeFiles/cilisp.dir/flags.make
 
 ciLispParser.c: ../src/ciLisp.y
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-2/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "[BISON][ciLispParser] Building parser with bison 2.3"
-	cd /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-2 && /usr/bin/bison -d --verbose -o /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-2/cmake-build-debug/ciLispParser.c src/ciLisp.y
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "[BISON][ciLispParser] Building parser with bison 2.3"
+	cd /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4 && /usr/bin/bison -d --verbose -o /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/ciLispParser.c src/ciLisp.y
 
 ciLispParser.output: ciLispParser.c
 	@$(CMAKE_COMMAND) -E touch_nocreate ciLispParser.output
@@ -68,48 +68,48 @@ ciLispParser.h: ciLispParser.c
 	@$(CMAKE_COMMAND) -E touch_nocreate ciLispParser.h
 
 ciLispScanner.c: ../src/ciLisp.l
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-2/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "[FLEX][ciLispScanner] Building scanner with flex 2.5.35"
-	cd /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-2 && /usr/bin/flex -o/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-2/cmake-build-debug/ciLispScanner.c src/ciLisp.l
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --blue --bold --progress-dir=/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "[FLEX][ciLispScanner] Building scanner with flex 2.5.35"
+	cd /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4 && /usr/bin/flex -o/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/ciLispScanner.c src/ciLisp.l
 
 CMakeFiles/cilisp.dir/src/ciLisp.c.o: CMakeFiles/cilisp.dir/flags.make
 CMakeFiles/cilisp.dir/src/ciLisp.c.o: ../src/ciLisp.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-2/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/cilisp.dir/src/ciLisp.c.o"
-	/Library/Developer/CommandLineTools/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/cilisp.dir/src/ciLisp.c.o   -c /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-2/src/ciLisp.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building C object CMakeFiles/cilisp.dir/src/ciLisp.c.o"
+	/Library/Developer/CommandLineTools/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/cilisp.dir/src/ciLisp.c.o   -c /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/src/ciLisp.c
 
 CMakeFiles/cilisp.dir/src/ciLisp.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/cilisp.dir/src/ciLisp.c.i"
-	/Library/Developer/CommandLineTools/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-2/src/ciLisp.c > CMakeFiles/cilisp.dir/src/ciLisp.c.i
+	/Library/Developer/CommandLineTools/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/src/ciLisp.c > CMakeFiles/cilisp.dir/src/ciLisp.c.i
 
 CMakeFiles/cilisp.dir/src/ciLisp.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/cilisp.dir/src/ciLisp.c.s"
-	/Library/Developer/CommandLineTools/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-2/src/ciLisp.c -o CMakeFiles/cilisp.dir/src/ciLisp.c.s
+	/Library/Developer/CommandLineTools/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/src/ciLisp.c -o CMakeFiles/cilisp.dir/src/ciLisp.c.s
 
 CMakeFiles/cilisp.dir/ciLispScanner.c.o: CMakeFiles/cilisp.dir/flags.make
 CMakeFiles/cilisp.dir/ciLispScanner.c.o: ciLispScanner.c
 CMakeFiles/cilisp.dir/ciLispScanner.c.o: ciLispParser.h
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-2/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/cilisp.dir/ciLispScanner.c.o"
-	/Library/Developer/CommandLineTools/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/cilisp.dir/ciLispScanner.c.o   -c /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-2/cmake-build-debug/ciLispScanner.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building C object CMakeFiles/cilisp.dir/ciLispScanner.c.o"
+	/Library/Developer/CommandLineTools/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/cilisp.dir/ciLispScanner.c.o   -c /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/ciLispScanner.c
 
 CMakeFiles/cilisp.dir/ciLispScanner.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/cilisp.dir/ciLispScanner.c.i"
-	/Library/Developer/CommandLineTools/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-2/cmake-build-debug/ciLispScanner.c > CMakeFiles/cilisp.dir/ciLispScanner.c.i
+	/Library/Developer/CommandLineTools/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/ciLispScanner.c > CMakeFiles/cilisp.dir/ciLispScanner.c.i
 
 CMakeFiles/cilisp.dir/ciLispScanner.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/cilisp.dir/ciLispScanner.c.s"
-	/Library/Developer/CommandLineTools/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-2/cmake-build-debug/ciLispScanner.c -o CMakeFiles/cilisp.dir/ciLispScanner.c.s
+	/Library/Developer/CommandLineTools/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/ciLispScanner.c -o CMakeFiles/cilisp.dir/ciLispScanner.c.s
 
 CMakeFiles/cilisp.dir/ciLispParser.c.o: CMakeFiles/cilisp.dir/flags.make
 CMakeFiles/cilisp.dir/ciLispParser.c.o: ciLispParser.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-2/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/cilisp.dir/ciLispParser.c.o"
-	/Library/Developer/CommandLineTools/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/cilisp.dir/ciLispParser.c.o   -c /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-2/cmake-build-debug/ciLispParser.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building C object CMakeFiles/cilisp.dir/ciLispParser.c.o"
+	/Library/Developer/CommandLineTools/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/cilisp.dir/ciLispParser.c.o   -c /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/ciLispParser.c
 
 CMakeFiles/cilisp.dir/ciLispParser.c.i: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/cilisp.dir/ciLispParser.c.i"
-	/Library/Developer/CommandLineTools/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-2/cmake-build-debug/ciLispParser.c > CMakeFiles/cilisp.dir/ciLispParser.c.i
+	/Library/Developer/CommandLineTools/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/ciLispParser.c > CMakeFiles/cilisp.dir/ciLispParser.c.i
 
 CMakeFiles/cilisp.dir/ciLispParser.c.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/cilisp.dir/ciLispParser.c.s"
-	/Library/Developer/CommandLineTools/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-2/cmake-build-debug/ciLispParser.c -o CMakeFiles/cilisp.dir/ciLispParser.c.s
+	/Library/Developer/CommandLineTools/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/ciLispParser.c -o CMakeFiles/cilisp.dir/ciLispParser.c.s
 
 # Object files for target cilisp
 cilisp_OBJECTS = \
@@ -125,7 +125,7 @@ cilisp: CMakeFiles/cilisp.dir/ciLispScanner.c.o
 cilisp: CMakeFiles/cilisp.dir/ciLispParser.c.o
 cilisp: CMakeFiles/cilisp.dir/build.make
 cilisp: CMakeFiles/cilisp.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-2/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking C executable cilisp"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Linking C executable cilisp"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/cilisp.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -141,6 +141,6 @@ CMakeFiles/cilisp.dir/depend: ciLispParser.c
 CMakeFiles/cilisp.dir/depend: ciLispParser.output
 CMakeFiles/cilisp.dir/depend: ciLispParser.h
 CMakeFiles/cilisp.dir/depend: ciLispScanner.c
-	cd /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-2/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-2 /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-2 /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-2/cmake-build-debug /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-2/cmake-build-debug /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-2/cmake-build-debug/CMakeFiles/cilisp.dir/DependInfo.cmake --color=$(COLOR)
+	cd /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug && $(CMAKE_COMMAND) -E cmake_depends "Unix Makefiles" /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4 /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4 /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/CMakeFiles/cilisp.dir/DependInfo.cmake --color=$(COLOR)
 .PHONY : CMakeFiles/cilisp.dir/depend
 

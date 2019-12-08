@@ -35,11 +35,9 @@ char *funcNames[] = {
         ""
 };
 
-OPER_TYPE resolveFunc(char *funcName)
-{
+OPER_TYPE resolveFunc(char *funcName) {
     int i = 0;
-    while (funcNames[i][0] != '\0')
-    {
+    while (funcNames[i][0] != '\0') {
         if (strcmp(funcNames[i], funcName) == 0)
             return i;
         i++;
@@ -53,9 +51,9 @@ char *typeNames[] = {
         ""
 };
 
-NUM_TYPE resolveType(char *typeName){
+NUM_TYPE resolveType(char *typeName) {
     int i = 0;
-    while (typeNames[i][0] != '\0'){
+    while (typeNames[i][0] != '\0') {
         if (strcmp(typeNames[i], typeName) == 0)
             return i;
         ++i;
@@ -69,8 +67,7 @@ NUM_TYPE resolveType(char *typeName){
 // Sets the AST_NODE's type to number.
 // Populates the value of the contained NUMBER_AST_NODE with the argument value.
 // SEE: AST_NODE, NUM_AST_NODE, AST_NODE_TYPE.
-AST_NODE *createNumberNode(double value, NUM_TYPE type)
-{
+AST_NODE *createNumberNode(double value, NUM_TYPE type) {
     AST_NODE *node;
     size_t nodeSize;
 
@@ -93,8 +90,7 @@ AST_NODE *createNumberNode(double value, NUM_TYPE type)
 //      - An OPER_TYPE (the enum identifying the specific function being called)
 //      - 2 AST_NODEs, the operands
 // SEE: AST_NODE, FUNC_AST_NODE, AST_NODE_TYPE.
-AST_NODE *createFunctionNode(char *funcName, AST_NODE *op1, AST_NODE *op2)
-{
+AST_NODE *createFunctionNode(char *funcName, AST_NODE *op1, AST_NODE *op2) {
     AST_NODE *node;
     size_t nodeSize;
 
@@ -116,12 +112,12 @@ AST_NODE *createFunctionNode(char *funcName, AST_NODE *op1, AST_NODE *op2)
     if (node->data.function.oper == CUSTOM_OPER)
         node->data.function.ident = funcName;
     else
-        free (funcName);
+        free(funcName);
 
-    if(op1 != NULL){
+    if (op1 != NULL) {
         op1->parent = node;
     }
-    if(op2 != NULL){
+    if (op2 != NULL) {
         op2->parent = node;
     }
 
@@ -139,7 +135,7 @@ AST_NODE *createFunctionNode(char *funcName, AST_NODE *op1, AST_NODE *op2)
     return node;
 }
 
-AST_NODE *createSymbolNode(char *ident){
+AST_NODE *createSymbolNode(char *ident) {
     AST_NODE *node;
     size_t nodeSize = sizeof(AST_NODE);
     if ((node = calloc(nodeSize, 1)) == NULL)
@@ -152,13 +148,13 @@ AST_NODE *createSymbolNode(char *ident){
     return node;
 }
 
-AST_NODE *addSymbolTable(SYMBOL_TABLE_NODE *symbolTable, AST_NODE *node){
+AST_NODE *addSymbolTable(SYMBOL_TABLE_NODE *symbolTable, AST_NODE *node) {
     node->symbolTable = symbolTable;
 //    node->symbolTable->val->parent = node;
     return node;
 }
 
-SYMBOL_TABLE_NODE *createSymbolTableNode(char *ident, AST_NODE *valueNode, NUM_TYPE type){
+SYMBOL_TABLE_NODE *createSymbolTableNode(char *ident, AST_NODE *valueNode, NUM_TYPE type) {
     //TODO createSymbolNode
     SYMBOL_TABLE_NODE *node;
     size_t nodeSize = sizeof(SYMBOL_TABLE_NODE);
@@ -174,15 +170,15 @@ SYMBOL_TABLE_NODE *createSymbolTableNode(char *ident, AST_NODE *valueNode, NUM_T
 }
 
 
-SYMBOL_TABLE_NODE *addToSymbolTable(SYMBOL_TABLE_NODE *parentNode, SYMBOL_TABLE_NODE *newNode){
+SYMBOL_TABLE_NODE *addToSymbolTable(SYMBOL_TABLE_NODE *parentNode, SYMBOL_TABLE_NODE *newNode) {
 
-    if(parentNode->ident == newNode->ident){
+    if (parentNode->ident == newNode->ident) {
         yyerror("Conflicting Symbol Definition");
     }
 
-    while(parentNode->next != NULL){
+    while (parentNode->next != NULL) {
         parentNode = parentNode->next;
-        if(parentNode->ident == newNode->ident){
+        if (parentNode->ident == newNode->ident) {
             yyerror("Conflicting Symbol Definition");
         }
     }
@@ -201,20 +197,17 @@ SYMBOL_TABLE_NODE *addToSymbolTable(SYMBOL_TABLE_NODE *parentNode, SYMBOL_TABLE_
 // (see the program production in ciLisp.y)
 // Recursively frees the whole abstract syntax tree.
 // You'll need to update and expand freeNode as the project develops.
-void freeNode(AST_NODE *node)
-{
+void freeNode(AST_NODE *node) {
     if (!node)
         return;
 
-    if (node->type == FUNC_NODE_TYPE)
-    {
+    if (node->type == FUNC_NODE_TYPE) {
         // Recursive calls to free child nodes
         freeNode(node->data.function.op1);
         freeNode(node->data.function.op2);
 
         // Free up identifier string if necessary
-        if (node->data.function.oper == CUSTOM_OPER)
-        {
+        if (node->data.function.oper == CUSTOM_OPER) {
             free(node->data.function.ident);
         }
     }
@@ -226,17 +219,15 @@ void freeNode(AST_NODE *node)
 // returns a RET_VAL storing the the resulting value and type.
 // You'll need to update and expand eval (and the more specific eval functions below)
 // as the project develops.
-RET_VAL eval(AST_NODE *node)
-{
+RET_VAL eval(AST_NODE *node) {
     if (!node)
-        return (RET_VAL){INT_TYPE, NAN};
+        return (RET_VAL) {INT_TYPE, NAN};
 
     RET_VAL result = {INT_TYPE, NAN}; // see NUM_AST_NODE, because RET_VAL is just an alternative name for it.
 
     // Make calls to other eval functions based on node type.
     // Use the results of those calls to populate result.
-    switch (node->type)
-    {
+    switch (node->type) {
         case NUM_NODE_TYPE:
             result = evalNumNode(node);
             break;
@@ -251,14 +242,13 @@ RET_VAL eval(AST_NODE *node)
     }
 
     return result;
-}  
+}
 
 // returns a pointer to the NUM_AST_NODE (aka RET_VAL) referenced by node.
 // DOES NOT allocate space for a new RET_VAL.
-RET_VAL evalNumNode(AST_NODE *node)
-{
+RET_VAL evalNumNode(AST_NODE *node) {
     if (!node)
-        return (RET_VAL){INT_TYPE, NAN};
+        return (RET_VAL) {INT_TYPE, NAN};
 
     RET_VAL result = {INT_TYPE, NAN};
 
@@ -271,10 +261,9 @@ RET_VAL evalNumNode(AST_NODE *node)
 }
 
 
-RET_VAL evalFuncNode(AST_NODE *node)
-{
+RET_VAL evalFuncNode(AST_NODE *node) {
     if (!node)
-        return (RET_VAL){INT_TYPE, NAN};
+        return (RET_VAL) {INT_TYPE, NAN};
 
     RET_VAL result = {INT_TYPE, NAN};
 
@@ -290,11 +279,11 @@ RET_VAL evalFuncNode(AST_NODE *node)
 //
 //    op1 = node->data.function.op1->data.number.value;
 
-    if(node->data.function.op1 != NULL) {
+    if (node->data.function.op1 != NULL) {
         op1 = eval(node->data.function.op1);
         result.type = op1.type;
     }
-    if(node->data.function.op2 != NULL){
+    if (node->data.function.op2 != NULL) {
         op2 = eval(node->data.function.op2);
         result.type = op1.type || op2.type;
     }
@@ -318,7 +307,7 @@ RET_VAL evalFuncNode(AST_NODE *node)
     // TODO     evalFuncNode:             populate result with the result of running the function on its operands.
     // SEE: AST_NODE, AST_NODE_TYPE, FUNC_AST_NODE
 
-    switch (node->data.function.oper){
+    switch (node->data.function.oper) {
         case NEG_OPER:
             result.value = -1 * op1.value;
             break;
@@ -340,9 +329,10 @@ RET_VAL evalFuncNode(AST_NODE *node)
         case CBRT_OPER:
             result.value = cbrt(op1.value);
             break;
-//        case PRINT_OPER:
-//            result.value = print()
-//            break;
+        case PRINT_OPER:
+            result = print(node->data.function.op1);
+            printf("\n");
+            break;
 
         case ADD_OPER:
             result.value = op1.value + op2.value;
@@ -393,62 +383,99 @@ RET_VAL evalFuncNode(AST_NODE *node)
     }
 
 
-
-    if(result.type == INT_TYPE)
+    if (result.type == INT_TYPE)
         result.value = floor(result.value);
 
     return result;
 }
 
-RET_VAL evalSymbolNode(AST_NODE *symbolNode){
+RET_VAL print(AST_NODE *node) {
+    if (!node) return (RET_VAL) {NO_TYPE, NAN};
+
+    RET_VAL result = eval(node);
+
+    switch (node->type) {
+        case NUM_NODE_TYPE:
+            switch (result.type) {
+                case INT_TYPE:
+                    printf("(INT_TYPE: %ld) ", (long) floor(result.value));
+                    break;
+                case DOUBLE_TYPE:
+                    printf("(DOUBLE_TYPE: %f) ", result.value);
+                    break;
+                default:
+                    yyerror("Invalid Type Error in printRetVal");
+                    break;
+            }
+            break;
+        case FUNC_NODE_TYPE:
+            printf("(FUNC: %s ", funcNames[node->data.function.oper]);
+            print(node->data.function.op1);
+            print(node->data.function.op2);
+            printf(") ");
+            break;
+        case SYMBOL_NODE_TYPE:
+            printf("(SYMBOL: %s ", node->data.symbol.ident);
+            print(getSymbolTableNode(node)->val);
+            printf(") ");
+            break;
+    }
+    return result;
+}
+
+RET_VAL evalSymbolNode(AST_NODE *symbolNode) {
     //TODO evalSymbolNode
 
-    if(!symbolNode)
-        return (RET_VAL){INT_TYPE, NAN};
+    if (!symbolNode)
+        return (RET_VAL) {INT_TYPE, NAN};
 
     RET_VAL result = {INT_TYPE, NAN};
 
-    AST_NODE *tempNode = symbolNode;
-//    size_t tempSize = sizeof(SYMBOL_TABLE_NODE);
-//    if ((tempTableNode = calloc(tempSize, 1)) == NULL)
-//        yyerror("Memory allocation failed!");
+    SYMBOL_TABLE_NODE *tempTableNode = getSymbolTableNode(symbolNode);
 
+    result = eval(tempTableNode->val);
+
+    if (result.type == DOUBLE_TYPE && tempTableNode->type == INT_TYPE) {
+        printf("WARNING: precision loss in the assignment for variable %s\n", symbolNode->data.symbol.ident);
+        result.value = round(result.value);
+    }
+    result.type = tempTableNode->type;
+
+    return result;
+}
+
+SYMBOL_TABLE_NODE *getSymbolTableNode(AST_NODE *symbolNode) {
+    //TODO evalSymbolNode
+
+    SYMBOL_TABLE_NODE *result = symbolNode->symbolTable;
+    AST_NODE *tempNode = symbolNode;
     bool found = false;
 
-    while (tempNode->parent != NULL && !found) {
-        tempNode = tempNode->parent;
+    while (!found && tempNode->parent != NULL) {
 
-        SYMBOL_TABLE_NODE *tempTableNode = tempNode->symbolTable;
-        while (tempTableNode != NULL && !found) {
-            if(symbolNode->data.symbol.ident != tempTableNode->ident)
+        tempNode = tempNode->parent;
+        result = tempNode->symbolTable;
+
+        while (!found && result != NULL) {
+            if (strcmp(symbolNode->data.symbol.ident, result->ident) == 0)
                 found = true;
             else
-                tempTableNode = tempTableNode->next;
-        }
-        if (found) {
-            result = eval(tempTableNode->val);
-
-            if(result.type == DOUBLE_TYPE && tempTableNode->type == INT_TYPE) {
-                printf("WARNING: precision loss in the assignment for variable %s\n", symbolNode->data.symbol.ident);
-                result.value = round(result.value);
-            }
-            result.type = tempTableNode->type;
+                result = result->next;
         }
     }
 
-    if(!found){
-        printf("ERROR: Invalid Symbol");
+    if (!found) {
+        yyerror("ERROR: Invalid Symbol");
     }
 
     return result;
 }
 
 // prints the type and value of a RET_VAL
-void printRetVal(RET_VAL val)
-{
-    switch (val.type){
+void printRetVal(RET_VAL val) {
+    switch (val.type) {
         case INT_TYPE:
-            printf("INT_TYPE: %ld", (long)floor(val.value) );
+            printf("INT_TYPE: %ld", (long) floor(val.value));
             break;
         case DOUBLE_TYPE:
             printf("DOUBLE_TYPE: %f", val.value);

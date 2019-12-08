@@ -122,7 +122,10 @@ void freeNode(AST_NODE *node);
 RET_VAL eval(AST_NODE *node);
 RET_VAL evalNumNode(AST_NODE *node);
 RET_VAL evalFuncNode(AST_NODE *node);
+RET_VAL print(AST_NODE *node);
 RET_VAL evalSymbolNode(AST_NODE *node);
+SYMBOL_TABLE_NODE *getSymbolTableNode(AST_NODE *symbolNode);
+
 
 
 OPER_TYPE getOperType(char *funcName);
