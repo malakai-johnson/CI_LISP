@@ -23,6 +23,9 @@ Grammar
    14         | let_list let_elem
 
    15 let_elem: LPAREN SYMBOL s_expr RPAREN
+   16         | LPAREN type SYMBOL s_expr RPAREN
+
+   17 type: TYPE
 
 
 Terminals, with rules where they appear
@@ -30,34 +33,37 @@ Terminals, with rules where they appear
 $end (0) 0
 error (256) 7
 FUNC (258) 10 11
-SYMBOL (259) 5 15
-INT (260) 8
-DOUBLE (261) 9
-LPAREN (262) 4 10 11 12 15
-RPAREN (263) 4 10 11 12 15
-LET (264) 13
-EOL (265) 1
-QUIT (266) 6
+SYMBOL (259) 5 15 16
+TYPE (260) 17
+INT (261) 8
+DOUBLE (262) 9
+LPAREN (263) 4 10 11 12 15 16
+RPAREN (264) 4 10 11 12 15 16
+LET (265) 13
+EOL (266) 1
+QUIT (267) 6
 
 
 Nonterminals, with rules where they appear
 
-$accept (12)
+$accept (13)
     on left: 0
-program (13)
+program (14)
     on left: 1, on right: 0
-s_expr (14)
-    on left: 2 3 4 5 6 7, on right: 1 4 10 11 15
-number (15)
+s_expr (15)
+    on left: 2 3 4 5 6 7, on right: 1 4 10 11 15 16
+number (16)
     on left: 8 9, on right: 2
-f_expr (16)
+f_expr (17)
     on left: 10 11, on right: 3
-let_section (17)
+let_section (18)
     on left: 12, on right: 4
-let_list (18)
+let_list (19)
     on left: 13 14, on right: 12 14
-let_elem (19)
-    on left: 15, on right: 13 14
+let_elem (20)
+    on left: 15 16, on right: 13 14
+type (21)
+    on left: 17, on right: 16
 
 
 state 0
@@ -270,8 +276,12 @@ state 21
 state 22
 
    15 let_elem: LPAREN . SYMBOL s_expr RPAREN
+   16         | LPAREN . type SYMBOL s_expr RPAREN
 
     SYMBOL  shift, and go to state 28
+    TYPE    shift, and go to state 29
+
+    type  go to state 30
 
 
 state 23
@@ -320,20 +330,64 @@ state 28
     LPAREN  shift, and go to state 5
     QUIT    shift, and go to state 6
 
-    s_expr  go to state 29
+    s_expr  go to state 31
     number  go to state 9
     f_expr  go to state 10
 
 
 state 29
 
-   15 let_elem: LPAREN SYMBOL s_expr . RPAREN
+   17 type: TYPE .
 
-    RPAREN  shift, and go to state 30
+    $default  reduce using rule 17 (type)
 
 
 state 30
 
+   16 let_elem: LPAREN type . SYMBOL s_expr RPAREN
+
+    SYMBOL  shift, and go to state 32
+
+
+state 31
+
+   15 let_elem: LPAREN SYMBOL s_expr . RPAREN
+
+    RPAREN  shift, and go to state 33
+
+
+state 32
+
+   16 let_elem: LPAREN type SYMBOL . s_expr RPAREN
+
+    error   shift, and go to state 1
+    SYMBOL  shift, and go to state 2
+    INT     shift, and go to state 3
+    DOUBLE  shift, and go to state 4
+    LPAREN  shift, and go to state 5
+    QUIT    shift, and go to state 6
+
+    s_expr  go to state 34
+    number  go to state 9
+    f_expr  go to state 10
+
+
+state 33
+
    15 let_elem: LPAREN SYMBOL s_expr RPAREN .
 
     $default  reduce using rule 15 (let_elem)
+
+
+state 34
+
+   16 let_elem: LPAREN type SYMBOL s_expr . RPAREN
+
+    RPAREN  shift, and go to state 35
+
+
+state 35
+
+   16 let_elem: LPAREN type SYMBOL s_expr RPAREN .
+
+    $default  reduce using rule 16 (let_elem)

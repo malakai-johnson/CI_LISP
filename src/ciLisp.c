@@ -16,6 +16,7 @@ char *funcNames[] = {
         "log",
         "exp2",
         "cbrt",
+        "print",
 
         "add",
         "sub",
@@ -28,7 +29,6 @@ char *funcNames[] = {
         "hypot",
         "read",
         "rand",
-        "print",
         "equal",
         "less",
         "greater",
@@ -46,6 +46,23 @@ OPER_TYPE resolveFunc(char *funcName)
     }
     return CUSTOM_OPER;
 }
+
+char *typeNames[] = {
+        "int",
+        "double",
+        ""
+};
+
+NUM_TYPE resolveType(char *typeName){
+    int i = 0;
+    while (typeNames[i][0] != '\0'){
+        if (strcmp(typeNames[i], typeName) == 0)
+            return i;
+        ++i;
+    }
+    return NO_TYPE;
+}
+
 
 // Called when an INT or DOUBLE token is encountered (see ciLisp.l and ciLisp.y).
 // Creates an AST_NODE for the number.
@@ -93,7 +110,7 @@ AST_NODE *createFunctionNode(char *funcName, AST_NODE *op1, AST_NODE *op2)
     // For functions other than CUSTOM_OPER, you should free the funcName after you're assigned the OPER_TYPE.
 
     node->type = FUNC_NODE_TYPE;
-
+    node->symbolTable = NULL;
     node->data.function.oper = resolveFunc(funcName);
 
     if (node->data.function.oper == CUSTOM_OPER)
@@ -141,7 +158,7 @@ AST_NODE *addSymbolTable(SYMBOL_TABLE_NODE *symbolTable, AST_NODE *node){
     return node;
 }
 
-SYMBOL_TABLE_NODE *createSymbolTableNode(char *ident, AST_NODE *valueNode){
+SYMBOL_TABLE_NODE *createSymbolTableNode(char *ident, AST_NODE *valueNode, NUM_TYPE type){
     //TODO createSymbolNode
     SYMBOL_TABLE_NODE *node;
     size_t nodeSize = sizeof(SYMBOL_TABLE_NODE);
@@ -150,9 +167,12 @@ SYMBOL_TABLE_NODE *createSymbolTableNode(char *ident, AST_NODE *valueNode){
 
     node->ident = ident;
     node->val = valueNode;
+    node->type = type;
     node->next = NULL;
 
+    return node;
 }
+
 
 SYMBOL_TABLE_NODE *addToSymbolTable(SYMBOL_TABLE_NODE *parentNode, SYMBOL_TABLE_NODE *newNode){
 
@@ -225,6 +245,7 @@ RET_VAL eval(AST_NODE *node)
             break;
         case SYMBOL_NODE_TYPE:
             result = evalSymbolNode(node);
+            break;
         default:
             yyerror("Invalid AST_NODE_TYPE, probably invalid writes somewhere!");
     }
@@ -319,6 +340,9 @@ RET_VAL evalFuncNode(AST_NODE *node)
         case CBRT_OPER:
             result.value = cbrt(op1.value);
             break;
+//        case PRINT_OPER:
+//            result.value = print()
+//            break;
 
         case ADD_OPER:
             result.value = op1.value + op2.value;
@@ -353,9 +377,6 @@ RET_VAL evalFuncNode(AST_NODE *node)
 //        case RAND_OPER:
 //            result.value =
 //            break;
-//        case PRINT_OPER:
-//            result.value =
-//            break;
 //        case EQUAL_OPER:
 //            result.value =
 //            break;
@@ -387,23 +408,35 @@ RET_VAL evalSymbolNode(AST_NODE *symbolNode){
 
     RET_VAL result = {INT_TYPE, NAN};
 
-    SYMBOL_TABLE_NODE *tempTableNode;
+    AST_NODE *tempNode = symbolNode;
 //    size_t tempSize = sizeof(SYMBOL_TABLE_NODE);
 //    if ((tempTableNode = calloc(tempSize, 1)) == NULL)
 //        yyerror("Memory allocation failed!");
 
-    while (symbolNode->parent != NULL && result.value == NAN) {
-        tempTableNode = symbolNode->parent->symbolTable;
+    bool found = false;
 
-        while (tempTableNode != NULL && symbolNode->data.symbol.ident != tempTableNode->ident) {
-            tempTableNode = tempTableNode->next;
+    while (tempNode->parent != NULL && !found) {
+        tempNode = tempNode->parent;
+
+        SYMBOL_TABLE_NODE *tempTableNode = tempNode->symbolTable;
+        while (tempTableNode != NULL && !found) {
+            if(symbolNode->data.symbol.ident != tempTableNode->ident)
+                found = true;
+            else
+                tempTableNode = tempTableNode->next;
         }
-        if (tempTableNode != NULL) {
+        if (found) {
             result = eval(tempTableNode->val);
+
+            if(result.type == DOUBLE_TYPE && tempTableNode->type == INT_TYPE) {
+                printf("WARNING: precision loss in the assignment for variable %s\n", symbolNode->data.symbol.ident);
+                result.value = round(result.value);
+            }
+            result.type = tempTableNode->type;
         }
     }
 
-    if(result.value == NAN){
+    if(!found){
         printf("ERROR: Invalid Symbol");
     }
 

@@ -26,7 +26,9 @@ typedef enum oper {
     LOG_OPER,
     EXP2_OPER,
     CBRT_OPER,
-//              single op < ADD_OPER <= double op
+    PRINT_OPER,
+
+    //              single op < ADD_OPER <= double op
     ADD_OPER,
     SUB_OPER,
     MULT_OPER,
@@ -38,7 +40,6 @@ typedef enum oper {
     HYPOT_OPER,
     READ_OPER,
     RAND_OPER,
-    PRINT_OPER,
     EQUAL_OPER,
     LESS_OPER,
     GREATER_OPER,
@@ -59,8 +60,11 @@ typedef enum {
 // Types of numeric values
 typedef enum {
     INT_TYPE = 0,
-    DOUBLE_TYPE
+    DOUBLE_TYPE,
+    NO_TYPE
 } NUM_TYPE;
+
+NUM_TYPE resolveType(char*);
 
 // Node to store a number.
 typedef struct {
@@ -87,6 +91,7 @@ typedef struct {
 
 typedef struct symbol_table_node {
     char *ident;
+    NUM_TYPE type;
     struct ast_node *val;
     struct symbol_table_node *next;
 } SYMBOL_TABLE_NODE;
@@ -109,7 +114,7 @@ AST_NODE *createSymbolNode(char *ident);
 AST_NODE *createFunctionNode(char *funcName, AST_NODE *op1, AST_NODE *op2);
 
 AST_NODE *addSymbolTable(SYMBOL_TABLE_NODE *symbolTable, AST_NODE *node);
-SYMBOL_TABLE_NODE *createSymbolTableNode(char *ident, AST_NODE *valueNode);
+SYMBOL_TABLE_NODE *createSymbolTableNode(char *ident, AST_NODE *valueNode, NUM_TYPE type);
 SYMBOL_TABLE_NODE *addToSymbolTable(SYMBOL_TABLE_NODE *headNode, SYMBOL_TABLE_NODE *newNode);
 
 void freeNode(AST_NODE *node);
