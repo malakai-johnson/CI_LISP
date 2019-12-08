@@ -1,4 +1,4 @@
-# Install script for directory: /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4
+# Install script for directory: /Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
@@ -40,5 +40,5 @@ endif()
 
 string(REPLACE ";" "\n" CMAKE_INSTALL_MANIFEST_CONTENT
        "${CMAKE_INSTALL_MANIFEST_FILES}")
-file(WRITE "/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
+file(WRITE "/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug/${CMAKE_INSTALL_MANIFEST}"
      "${CMAKE_INSTALL_MANIFEST_CONTENT}")

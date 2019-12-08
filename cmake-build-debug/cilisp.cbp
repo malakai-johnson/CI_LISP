@@ -8,44 +8,44 @@
 		<Option virtualFolders="CMake Files\;"/>
 		<Build>
 			<Target title="all">
-				<Option working_dir="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug"/>
+				<Option working_dir="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
-					<CompileFile command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="rebuild_cache">
-				<Option working_dir="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug"/>
+				<Option working_dir="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
-					<CompileFile command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="edit_cache">
-				<Option working_dir="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug"/>
+				<Option working_dir="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug"/>
 				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
-					<CompileFile command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="cilisp">
-				<Option output="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/cilisp" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug"/>
+				<Option output="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug/cilisp" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/src"/>
-					<Add directory="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug"/>
+					<Add directory="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/src"/>
+					<Add directory="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug"/>
 					<Add directory="/Library/Developer/CommandLineTools/usr/include/c++/v1"/>
 					<Add directory="/usr/local/include"/>
 					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/10.0.1/include"/>
@@ -54,21 +54,21 @@
 					<Add directory="/Library/Frameworks"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/Makefile&quot;  VERBOSE=1 cilisp"/>
-					<CompileFile command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug/Makefile&quot;  VERBOSE=1 cilisp"/>
+					<CompileFile command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="cilisp/fast">
-				<Option output="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/cilisp" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug"/>
+				<Option output="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug/cilisp" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug"/>
 				<Option object_output="./"/>
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
-					<Add directory="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/src"/>
-					<Add directory="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug"/>
+					<Add directory="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/src"/>
+					<Add directory="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug"/>
 					<Add directory="/Library/Developer/CommandLineTools/usr/include/c++/v1"/>
 					<Add directory="/usr/local/include"/>
 					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/10.0.1/include"/>
@@ -77,38 +77,38 @@
 					<Add directory="/Library/Frameworks"/>
 				</Compiler>
 				<MakeCommands>
-					<Build command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/Makefile&quot;  VERBOSE=1 cilisp/fast"/>
-					<CompileFile command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<Build command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug/Makefile&quot;  VERBOSE=1 cilisp/fast"/>
+					<CompileFile command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/local/bin/gmake -j4 -f &quot;/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 		</Build>
-		<Unit filename="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/ciLispParser.c">
+		<Unit filename="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug/ciLispParser.c">
 			<Option target="cilisp"/>
 		</Unit>
-		<Unit filename="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/ciLispParser.c.rule">
+		<Unit filename="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug/ciLispParser.c.rule">
 			<Option target="cilisp"/>
 		</Unit>
-		<Unit filename="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/ciLispParser.h">
+		<Unit filename="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug/ciLispParser.h">
 			<Option target="cilisp"/>
 		</Unit>
-		<Unit filename="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/ciLispParser.output">
+		<Unit filename="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug/ciLispParser.output">
 			<Option target="cilisp"/>
 		</Unit>
-		<Unit filename="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/ciLispScanner.c">
+		<Unit filename="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug/ciLispScanner.c">
 			<Option target="cilisp"/>
 		</Unit>
-		<Unit filename="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/cmake-build-debug/ciLispScanner.c.rule">
+		<Unit filename="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/cmake-build-debug/ciLispScanner.c.rule">
 			<Option target="cilisp"/>
 		</Unit>
-		<Unit filename="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/src/ciLisp.c">
+		<Unit filename="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/src/ciLisp.c">
 			<Option target="cilisp"/>
 		</Unit>
-		<Unit filename="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/src/ciLisp.h">
+		<Unit filename="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/src/ciLisp.h">
 			<Option target="cilisp"/>
 		</Unit>
-		<Unit filename="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-4/CMakeLists.txt">
+		<Unit filename="/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-5/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>
 	</Project>

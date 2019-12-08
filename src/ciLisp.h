@@ -26,13 +26,9 @@ typedef enum oper {
     LOG_OPER,
     EXP2_OPER,
     CBRT_OPER,
-    PRINT_OPER,
 
     //              single op < ADD_OPER <= double op
-    ADD_OPER,
-    SUB_OPER,
-    MULT_OPER,
-    DIV_OPER,
+
     REMAINDER_OPER,
     POW_OPER,
     MAX_OPER,
@@ -43,6 +39,12 @@ typedef enum oper {
     EQUAL_OPER,
     LESS_OPER,
     GREATER_OPER,
+    ADD_OPER,
+    SUB_OPER,
+    MULT_OPER,
+    DIV_OPER,
+    PRINT_OPER,
+
     CUSTOM_OPER =255
 } OPER_TYPE;
 
@@ -60,7 +62,7 @@ typedef enum {
 // Types of numeric values
 typedef enum {
     INT_TYPE = 0,
-    DOUBLE_TYPE,
+    DOUBLE_TYPE =1,
     NO_TYPE
 } NUM_TYPE;
 
@@ -85,8 +87,7 @@ typedef NUM_AST_NODE RET_VAL;
 typedef struct {
     OPER_TYPE oper;
     char* ident; // only needed for custom functions
-    struct ast_node *op1;
-    struct ast_node *op2;
+    struct ast_node *opList;
 } FUNC_AST_NODE;
 
 typedef struct symbol_table_node {
@@ -107,11 +108,14 @@ typedef struct ast_node {
         FUNC_AST_NODE function;
         SYMBOL_AST_NODE symbol;
     } data;
+    struct ast_node *next;
 } AST_NODE;
 
 AST_NODE *createNumberNode(double value, NUM_TYPE type);
 AST_NODE *createSymbolNode(char *ident);
-AST_NODE *createFunctionNode(char *funcName, AST_NODE *op1, AST_NODE *op2);
+AST_NODE *createFunctionNode(char *funcName, AST_NODE *opList);
+bool checkParamList(char *funcName, int numOps, AST_NODE *opList);
+AST_NODE *addAstNode(AST_NODE *parent, AST_NODE *child);
 
 AST_NODE *addSymbolTable(SYMBOL_TABLE_NODE *symbolTable, AST_NODE *node);
 SYMBOL_TABLE_NODE *createSymbolTableNode(char *ident, AST_NODE *valueNode, NUM_TYPE type);
@@ -122,6 +126,10 @@ void freeNode(AST_NODE *node);
 RET_VAL eval(AST_NODE *node);
 RET_VAL evalNumNode(AST_NODE *node);
 RET_VAL evalFuncNode(AST_NODE *node);
+RET_VAL addOper(AST_NODE *op);
+RET_VAL subOper(AST_NODE *op);
+RET_VAL multOper(AST_NODE *op);
+RET_VAL divOper(AST_NODE *op);
 RET_VAL print(AST_NODE *node);
 RET_VAL evalSymbolNode(AST_NODE *node);
 SYMBOL_TABLE_NODE *getSymbolTableNode(AST_NODE *symbolNode);

@@ -16,12 +16,7 @@ char *funcNames[] = {
         "log",
         "exp2",
         "cbrt",
-        "print",
-
-        "add",
-        "sub",
-        "mult",
-        "div",
+        //unary <= cbrt
         "remainder",
         "pow",
         "max",
@@ -32,6 +27,13 @@ char *funcNames[] = {
         "equal",
         "less",
         "greater",
+        //binary <= greater
+        "add",
+        "sub",
+        "mult",
+        "div",
+        "print",
+
         ""
 };
 
@@ -90,7 +92,7 @@ AST_NODE *createNumberNode(double value, NUM_TYPE type) {
 //      - An OPER_TYPE (the enum identifying the specific function being called)
 //      - 2 AST_NODEs, the operands
 // SEE: AST_NODE, FUNC_AST_NODE, AST_NODE_TYPE.
-AST_NODE *createFunctionNode(char *funcName, AST_NODE *op1, AST_NODE *op2) {
+AST_NODE *createFunctionNode(char *funcName, AST_NODE *opList) {
     AST_NODE *node;
     size_t nodeSize;
 
@@ -109,30 +111,47 @@ AST_NODE *createFunctionNode(char *funcName, AST_NODE *op1, AST_NODE *op2) {
     node->symbolTable = NULL;
     node->data.function.oper = resolveFunc(funcName);
 
+    if(node->data.function.oper <= CBRT_OPER){
+        if(!checkParamList(funcName, 1, opList)){
+            return NULL;
+        }
+    }else if (node->data.function.oper <= GREATER_OPER){
+        if(!checkParamList(funcName, 2, opList)){
+            return NULL;
+        }    }
+
     if (node->data.function.oper == CUSTOM_OPER)
         node->data.function.ident = funcName;
     else
         free(funcName);
 
-    if (op1 != NULL) {
-        op1->parent = node;
+    AST_NODE *tempNode = opList;
+
+    while(tempNode){
+        tempNode->parent = node;
+        tempNode = tempNode->next;
     }
-    if (op2 != NULL) {
-        op2->parent = node;
-    }
 
-    node->data.function.op1 = op1;
-    node->data.function.op2 = op2;
-
-//    if(node->data.function.op1 != NULL){
-//        node->data.function.op1->parent = node;
-//    }
-//    if(node->data.function.op2 != NULL){
-//        node->data.function.op2->parent = node;
-//    }
-
+    node->data.function.opList = opList;
 
     return node;
+}
+
+//Checks the number of operands in opList matches numOps.
+// Returns true if there are enough operands, otherwise throws an error and returns false.
+//  If there are too many operands, returns true but prints an error.
+bool checkParamList(char *funcName, int numOps, AST_NODE *opList){
+        AST_NODE *temp = opList;
+        for (int i = 0; i < numOps; ++i){
+            if(!temp) {
+                yyerror("ERROR: too few parameters for the function <name>\n");
+                return false;
+            }
+            temp = temp->next;
+        }
+        if(temp)
+            printf("WARNING: too many parameters for the function <%s>\n", funcName);
+        return true;
 }
 
 AST_NODE *createSymbolNode(char *ident) {
@@ -152,6 +171,11 @@ AST_NODE *addSymbolTable(SYMBOL_TABLE_NODE *symbolTable, AST_NODE *node) {
     node->symbolTable = symbolTable;
 //    node->symbolTable->val->parent = node;
     return node;
+}
+
+AST_NODE *addAstNode(AST_NODE *parent, AST_NODE *child){
+    parent->next = child;
+    return parent;
 }
 
 SYMBOL_TABLE_NODE *createSymbolTableNode(char *ident, AST_NODE *valueNode, NUM_TYPE type) {
@@ -203,13 +227,16 @@ void freeNode(AST_NODE *node) {
 
     if (node->type == FUNC_NODE_TYPE) {
         // Recursive calls to free child nodes
-        freeNode(node->data.function.op1);
-        freeNode(node->data.function.op2);
+        freeNode(node->data.function.opList);
 
         // Free up identifier string if necessary
         if (node->data.function.oper == CUSTOM_OPER) {
             free(node->data.function.ident);
         }
+    }
+
+    if(node->type == SYMBOL_NODE_TYPE){
+        free(node->data.symbol.ident);
     }
 
     free(node);
@@ -267,8 +294,8 @@ RET_VAL evalFuncNode(AST_NODE *node) {
 
     RET_VAL result = {INT_TYPE, NAN};
 
-    RET_VAL op1 = {INT_TYPE, NAN};
-    RET_VAL op2 = {INT_TYPE, NAN};
+//    RET_VAL op1 = {INT_TYPE, NAN};
+//    RET_VAL op2 = {INT_TYPE, NAN};
 
 
 //    if(node->data.function.op1->type == FUNC_NODE_TYPE){
@@ -279,14 +306,23 @@ RET_VAL evalFuncNode(AST_NODE *node) {
 //
 //    op1 = node->data.function.op1->data.number.value;
 
-    if (node->data.function.op1 != NULL) {
-        op1 = eval(node->data.function.op1);
-        result.type = op1.type;
+    AST_NODE *tempNode = node->data.function.opList;
+
+    while(tempNode){
+        if(tempNode->type != NO_TYPE)
+            result.type = result.type || eval(tempNode).type;
+        tempNode = tempNode->next;
     }
-    if (node->data.function.op2 != NULL) {
-        op2 = eval(node->data.function.op2);
-        result.type = op1.type || op2.type;
-    }
+
+//
+//    if (node->data.function.op1 != NULL) {
+//        op1 = eval(node->data.function.op1);
+//        result.type = op1.type;
+//    }
+//    if (node->data.function.op2 != NULL) {
+//        op2 = eval(node->data.function.op2);
+//        result.type = op1.type || op2.type;
+//    }
 
 //    if(node->data.function.oper >= ADD_OPER) {
 //        // If binary func
@@ -307,60 +343,64 @@ RET_VAL evalFuncNode(AST_NODE *node) {
     // TODO     evalFuncNode:             populate result with the result of running the function on its operands.
     // SEE: AST_NODE, AST_NODE_TYPE, FUNC_AST_NODE
 
+    tempNode = node->data.function.opList;
+
     switch (node->data.function.oper) {
         case NEG_OPER:
-            result.value = -1 * op1.value;
+            result.value = -1 * eval(tempNode).value;
             break;
         case ABS_OPER:
-            result.value = fabs(op1.value);
+            result.value = fabs(eval(tempNode).value);
             break;
         case EXP_OPER:
-            result.value = exp(op1.value);
+            result.value = exp(eval(tempNode).value);
             break;
         case SQRT_OPER:
-            result.value = sqrt(op1.value);
+            result.value = sqrt(eval(tempNode).value);
             break;
         case LOG_OPER:
-            result.value = log(op1.value);
+            result.value = log(eval(tempNode).value);
             break;
         case EXP2_OPER:
-            result.value = exp2(op1.value);
+            result.value = exp2(eval(tempNode).value);
             break;
         case CBRT_OPER:
-            result.value = cbrt(op1.value);
-            break;
-        case PRINT_OPER:
-            result = print(node->data.function.op1);
-            printf("\n");
+            result.value = cbrt(eval(tempNode).value);
             break;
 
-        case ADD_OPER:
-            result.value = op1.value + op2.value;
-            break;
-        case SUB_OPER:
-            result.value = op1.value - op2.value;
-            break;
-        case MULT_OPER:
-            result.value = op1.value * op2.value;
-            break;
-        case DIV_OPER:
-            result.value = op1.value / op2.value;
-            break;
         case REMAINDER_OPER:
-            result.value = remainder(op1.value, op2.value);
+            result.value = remainder(eval(tempNode).value, eval(tempNode->next).value);
             break;
         case POW_OPER:
-            result.value = pow(op1.value, op2.value);
+            result.value = pow(eval(tempNode).value, eval(tempNode->next).value);
             break;
         case MAX_OPER:
-            result.value = fmax(op1.value, op2.value);
+            result.value = fmax(eval(tempNode).value, eval(tempNode->next).value);
             break;
         case MIN_OPER:
-            result.value = fmin(op1.value, op2.value);
+            result.value = fmin(eval(tempNode).value, eval(tempNode->next).value);
             break;
         case HYPOT_OPER:
-            result.value = hypot(op1.value, op2.value);
+            result.value = hypot(eval(tempNode).value, eval(tempNode->next).value);
             break;
+
+        case PRINT_OPER:
+            result = print(node->data.function.opList);
+            printf("\n");
+            break;
+        case ADD_OPER:
+            result = addOper(node->data.function.opList);
+            break;
+        case SUB_OPER:
+            result = subOper(node->data.function.opList);
+            break;
+        case MULT_OPER:
+            result = multOper(node->data.function.opList);
+            break;
+        case DIV_OPER:
+            result = divOper(node->data.function.opList);
+            break;
+
 //        case READ_OPER:
 //            result.value =
 //            break;
@@ -389,10 +429,98 @@ RET_VAL evalFuncNode(AST_NODE *node) {
     return result;
 }
 
-RET_VAL print(AST_NODE *node) {
+RET_VAL addOper(AST_NODE *op){
+    if(!op)
+        return  (RET_VAL){INT_TYPE, NAN};
+    RET_VAL result = (RET_VAL){INT_TYPE, 0};
+
+    while(op){
+        RET_VAL temp = eval(op);
+        result.value += temp.value;
+        result.type |= temp.type;
+        op = op->next;
+    }
+
+    return result;
+}
+
+RET_VAL subOper(AST_NODE *op){
+    if(!op)
+        return  (RET_VAL){INT_TYPE, NAN};
+    RET_VAL result = (RET_VAL){INT_TYPE, 0};
+
+    while(op){
+        RET_VAL temp = eval(op);
+        result.value -= temp.value;
+        result.type |= temp.type;
+        op = op->next;
+    }
+
+    return result;
+}
+
+RET_VAL multOper(AST_NODE *op){
+    if(!op)
+        return  (RET_VAL){INT_TYPE, NAN};
+    RET_VAL result = (RET_VAL){INT_TYPE, 0};
+
+    while(op){
+        RET_VAL temp = eval(op);
+        result.value *= temp.value;
+        result.type |= temp.type;
+        op = op->next;
+    }
+
+    return result;
+}
+
+RET_VAL divOper(AST_NODE *op){
+    if(!op)
+        return  (RET_VAL){INT_TYPE, NAN};
+    RET_VAL result = (RET_VAL){INT_TYPE, 0};
+
+    while(op){
+        RET_VAL temp = eval(op);
+        result.value /= temp.value;
+        result.type |= temp.type;
+        op = op->next;
+    }
+
+    return result;
+}
+
+RET_VAL print(AST_NODE *node){
+    RET_VAL result = (RET_VAL){NO_TYPE, NAN};
+    if(!node)
+        return result;
+
+    printf("=> ");
+
+    AST_NODE *temp = node;
+    while(temp) {
+
+        result = eval(temp);
+        switch (result.type) {
+            case INT_TYPE:
+                printf("INT_TYPE: %ld ", (long) floor(result.value));
+                break;
+            case DOUBLE_TYPE:
+                printf("DOUBLE_TYPE: %f ", result.value);
+                break;
+            default:
+                yyerror("Invalid Type Error in printRetVal");
+                break;
+        }
+        temp = temp->next;
+    }
+    return result;
+}
+
+RET_VAL printVerbose(AST_NODE *node) {
     if (!node) return (RET_VAL) {NO_TYPE, NAN};
 
     RET_VAL result = eval(node);
+
 
     switch (node->type) {
         case NUM_NODE_TYPE:
@@ -410,8 +538,11 @@ RET_VAL print(AST_NODE *node) {
             break;
         case FUNC_NODE_TYPE:
             printf("(FUNC: %s ", funcNames[node->data.function.oper]);
-            print(node->data.function.op1);
-            print(node->data.function.op2);
+            AST_NODE *temp = node->data.function.opList;
+            while(temp){
+                print(temp);
+                temp = temp->next;
+            }
             printf(") ");
             break;
         case SYMBOL_NODE_TYPE:
