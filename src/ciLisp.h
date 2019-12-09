@@ -19,26 +19,29 @@ void yyerror(char *);
 // Enum of all operators.
 // must be in sync with funcs in resolveFunc()
 typedef enum oper {
-    NEG_OPER, // 0
+    READ_OPER, // 0
+    RAND_OPER,
+    //end of nonary
+
+    NEG_OPER,
     ABS_OPER,
     EXP_OPER,
     SQRT_OPER,
     LOG_OPER,
     EXP2_OPER,
     CBRT_OPER,
-
-    //              single op < ADD_OPER <= double op
+    //end of unary
 
     REMAINDER_OPER,
     POW_OPER,
     MAX_OPER,
     MIN_OPER,
     HYPOT_OPER,
-    READ_OPER,
-    RAND_OPER,
     EQUAL_OPER,
     LESS_OPER,
     GREATER_OPER,
+    //end of binary
+
     ADD_OPER,
     SUB_OPER,
     MULT_OPER,
@@ -56,7 +59,8 @@ OPER_TYPE resolveFunc(char *);
 typedef enum {
     NUM_NODE_TYPE,
     FUNC_NODE_TYPE,
-    SYMBOL_NODE_TYPE
+    SYMBOL_NODE_TYPE,
+    COND_NODE_TYPE
 } AST_NODE_TYPE;
 
 // Types of numeric values
@@ -77,6 +81,12 @@ typedef struct {
 typedef struct symbol_ast_node {
     char *ident;
 } SYMBOL_AST_NODE;
+
+typedef struct {
+    struct ast_node *cond;
+    struct ast_node *ifTrue;
+    struct ast_node *ifFalse;
+} COND_AST_NODE;
 
 // Values returned by eval function will be numbers with a type.
 // They have the same structure as a NUM_AST_NODE.
@@ -106,6 +116,7 @@ typedef struct ast_node {
     union {
         NUM_AST_NODE number;
         FUNC_AST_NODE function;
+        COND_AST_NODE condition;
         SYMBOL_AST_NODE symbol;
     } data;
     struct ast_node *next;
@@ -114,6 +125,7 @@ typedef struct ast_node {
 AST_NODE *createNumberNode(double value, NUM_TYPE type);
 AST_NODE *createSymbolNode(char *ident);
 AST_NODE *createFunctionNode(char *funcName, AST_NODE *opList);
+AST_NODE *createCondNode(AST_NODE *condition, AST_NODE *ifTrue, AST_NODE *ifFalse);
 bool checkParamList(char *funcName, int numOps, AST_NODE *opList);
 AST_NODE *addAstNode(AST_NODE *parent, AST_NODE *child);
 
@@ -126,6 +138,10 @@ void freeNode(AST_NODE *node);
 RET_VAL eval(AST_NODE *node);
 RET_VAL evalNumNode(AST_NODE *node);
 RET_VAL evalFuncNode(AST_NODE *node);
+RET_VAL evalCondNode(AST_NODE *node);
+
+RET_VAL myRead();
+RET_VAL myRand();
 RET_VAL addOper(AST_NODE *op);
 RET_VAL subOper(AST_NODE *op);
 RET_VAL multOper(AST_NODE *op);

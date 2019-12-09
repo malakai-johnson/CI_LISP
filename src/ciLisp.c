@@ -1,4 +1,5 @@
 #include "ciLisp.h"
+#include <stdio.h>
 
 void yyerror(char *s) {
     fprintf(stderr, "\nERROR: %s\n", s);
@@ -9,6 +10,9 @@ void yyerror(char *s) {
 // Array of string values for operations.
 // Must be in sync with funcs in the OPER_TYPE enum in order for resolveFunc to work.
 char *funcNames[] = {
+        "read",
+        "rand",
+        //nonary <= rand
         "neg",
         "abs",
         "exp",
@@ -22,8 +26,6 @@ char *funcNames[] = {
         "max",
         "min",
         "hypot",
-        "read",
-        "rand",
         "equal",
         "less",
         "greater",
@@ -111,7 +113,12 @@ AST_NODE *createFunctionNode(char *funcName, AST_NODE *opList) {
     node->symbolTable = NULL;
     node->data.function.oper = resolveFunc(funcName);
 
-    if(node->data.function.oper <= CBRT_OPER){
+
+    if(node->data.function.oper <= RAND_OPER) {
+        if (!checkParamList(funcName, 0, opList)) {
+            return NULL;
+        }
+    }else if(node->data.function.oper <= CBRT_OPER){
         if(!checkParamList(funcName, 1, opList)){
             return NULL;
         }
@@ -133,6 +140,21 @@ AST_NODE *createFunctionNode(char *funcName, AST_NODE *opList) {
     }
 
     node->data.function.opList = opList;
+
+    return node;
+}
+
+AST_NODE *createCondNode(AST_NODE *condition, AST_NODE *ifTrue, AST_NODE *ifFalse){
+    AST_NODE *node;
+    size_t nodeSize = sizeof(AST_NODE);
+    if ((node = calloc(nodeSize, 1)) == NULL)
+        yyerror("Memory allocation failed!");
+
+    node->type = COND_NODE_TYPE;
+
+    node->data.condition.cond = condition;
+    node->data.condition.ifTrue = ifTrue;
+    node->data.condition.ifFalse = ifFalse;
 
     return node;
 }
@@ -261,6 +283,9 @@ RET_VAL eval(AST_NODE *node) {
         case FUNC_NODE_TYPE:
             result = evalFuncNode(node);
             break;
+        case COND_NODE_TYPE:
+            result = evalCondNode(node);
+            break;
         case SYMBOL_NODE_TYPE:
             result = evalSymbolNode(node);
             break;
@@ -346,6 +371,13 @@ RET_VAL evalFuncNode(AST_NODE *node) {
     tempNode = node->data.function.opList;
 
     switch (node->data.function.oper) {
+        case READ_OPER:
+            result = myRead();
+            break;
+        case RAND_OPER:
+            result = myRand();
+            break;
+
         case NEG_OPER:
             result.value = -1 * eval(tempNode).value;
             break;
@@ -384,6 +416,17 @@ RET_VAL evalFuncNode(AST_NODE *node) {
             result.value = hypot(eval(tempNode).value, eval(tempNode->next).value);
             break;
 
+        case EQUAL_OPER:
+            result.value = eval(tempNode).value == eval(tempNode->next).value;
+            break;
+        case LESS_OPER:
+            result.value = eval(tempNode).value < eval(tempNode->next).value;
+            break;
+        case GREATER_OPER:
+            result.value = eval(tempNode).value > eval(tempNode->next).value;
+            break;
+
+
         case PRINT_OPER:
             result = print(node->data.function.opList);
             printf("\n");
@@ -401,21 +444,6 @@ RET_VAL evalFuncNode(AST_NODE *node) {
             result = divOper(node->data.function.opList);
             break;
 
-//        case READ_OPER:
-//            result.value =
-//            break;
-//        case RAND_OPER:
-//            result.value =
-//            break;
-//        case EQUAL_OPER:
-//            result.value =
-//            break;
-//        case LESS_OPER:
-//            result.value =
-//            break;
-//        case GREATER_OPER:
-//            result.value =
-//            break;
 //        case CUSTOM_OPER:
 //            result.value =
 //            break;
@@ -425,6 +453,47 @@ RET_VAL evalFuncNode(AST_NODE *node) {
 
     if (result.type == INT_TYPE)
         result.value = floor(result.value);
+
+    return result;
+}
+
+RET_VAL evalCondNode(AST_NODE *node){
+    RET_VAL result;
+
+    if(eval(node->data.condition.cond).value == 0){
+        result = eval(node->data.condition.ifFalse);
+    }else{
+        result = eval(node->data.condition.ifTrue);
+    }
+
+    return result;
+}
+
+RET_VAL myRead(){
+    RET_VAL result = (RET_VAL){DOUBLE_TYPE, NAN};
+
+    printf("read := ");
+    double temp;
+
+
+    scanf("%f\n", &temp);
+
+    result.value = temp;
+
+    //Determines the type based on the value rather than the format
+//    if(remainder(temp, 1) == 0 ){
+//        result.type = INT_TYPE;
+//    }else{
+//        result.type = DOUBLE_TYPE;
+//    }
+
+    return result;
+}
+
+RET_VAL myRand(){
+    double temp = (double) rand() / RAND_MAX;
+
+    RET_VAL result = (RET_VAL){DOUBLE_TYPE, temp};
 
     return result;
 }

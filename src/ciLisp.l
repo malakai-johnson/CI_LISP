@@ -10,8 +10,9 @@ digit [0-9]
 letter [a-zA-Z]
 int [+-]?{digit}+
 double [+-]?{digit}+\.{digit}*
-func "neg"|"abs"|"exp"|"sqrt"|"add"|"sub"|"mult"|"div"|"remainder"|"log"|"pow"|"max"|"min"|"print"
+func "neg"|"abs"|"exp"|"sqrt"|"add"|"sub"|"mult"|"div"|"remainder"|"log"|"pow"|"max"|"min"|"print"|"rand"|"read"|"equal"|"less"|"greater"
 type "int"|"double"
+cond "cond"
 symbol {letter}+
 
 %%
@@ -52,6 +53,12 @@ symbol {letter}+
     fprintf(stderr, "lex: TYPE sval = %s\n", yylval.sval);
     return TYPE;
     }
+
+{cond} {
+        yylval.dval = strtod(yytext, NULL);
+        fprintf(stderr, "lex: COND\n");
+        return COND;
+}
 
 {symbol} {
     yylval.sval = (char *) malloc(strlen(yytext)*sizeof(char)+1);
