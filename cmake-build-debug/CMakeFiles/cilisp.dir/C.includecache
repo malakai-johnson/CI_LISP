@@ -6,13 +6,13 @@
 
 #IncludeRegexTransform: 
 
-/Users/malakai.johnson642/Downloads/CI_LISP-task-6/src/ciLisp.c
+/Users/malakai.johnson642/Documents/COMP-232/CiLisp/CI_LISP-task-6/src/ciLisp.c
 ciLisp.h
-/Users/malakai.johnson642/Downloads/CI_LISP-task-6/src/ciLisp.h
+/Users/malakai.johnson642/Documents/COMP-232/CiLisp/CI_LISP-task-6/src/ciLisp.h
 stdio.h
 -
 
-/Users/malakai.johnson642/Downloads/CI_LISP-task-6/src/ciLisp.h
+/Users/malakai.johnson642/Documents/COMP-232/CiLisp/CI_LISP-task-6/src/ciLisp.h
 stdio.h
 -
 stdlib.h
@@ -26,7 +26,7 @@ math.h
 stdbool.h
 -
 ciLispParser.h
-/Users/malakai.johnson642/Downloads/CI_LISP-task-6/src/ciLispParser.h
+/Users/malakai.johnson642/Documents/COMP-232/CiLisp/CI_LISP-task-6/src/ciLispParser.h
 
 ciLispParser.h
 

@@ -152,6 +152,10 @@ AST_NODE *createCondNode(AST_NODE *condition, AST_NODE *ifTrue, AST_NODE *ifFals
 
     node->type = COND_NODE_TYPE;
 
+    condition->parent = node;
+    ifTrue->parent = node;
+    ifFalse->parent = node;
+
     node->data.condition.cond = condition;
     node->data.condition.ifTrue = ifTrue;
     node->data.condition.ifFalse = ifFalse;
@@ -208,7 +212,12 @@ SYMBOL_TABLE_NODE *createSymbolTableNode(char *ident, AST_NODE *valueNode, NUM_T
         yyerror("Memory allocation failed!");
 
     node->ident = ident;
-    node->val = valueNode;
+    if(valueNode->type == FUNC_NODE_TYPE && valueNode->data.function.oper <= RAND_OPER){
+        RET_VAL temp = eval(valueNode);
+        node->val = createNumberNode(temp.value, temp.type);
+    }else {
+        node->val = valueNode;
+    }
     node->type = type;
     node->next = NULL;
 
@@ -319,18 +328,6 @@ RET_VAL evalFuncNode(AST_NODE *node) {
 
     RET_VAL result = {INT_TYPE, NAN};
 
-//    RET_VAL op1 = {INT_TYPE, NAN};
-//    RET_VAL op2 = {INT_TYPE, NAN};
-
-
-//    if(node->data.function.op1->type == FUNC_NODE_TYPE){
-//        RET_VAL temp = evalFuncNode(node->data.function.op1);
-//        node->data.function.op1->data.number.value = temp.value;
-//        node->data.function.op1->data.number.type = temp.type;
-//    }
-//
-//    op1 = node->data.function.op1->data.number.value;
-
     AST_NODE *tempNode = node->data.function.opList;
 
     while(tempNode){
@@ -338,31 +335,6 @@ RET_VAL evalFuncNode(AST_NODE *node) {
             result.type = result.type || eval(tempNode).type;
         tempNode = tempNode->next;
     }
-
-//
-//    if (node->data.function.op1 != NULL) {
-//        op1 = eval(node->data.function.op1);
-//        result.type = op1.type;
-//    }
-//    if (node->data.function.op2 != NULL) {
-//        op2 = eval(node->data.function.op2);
-//        result.type = op1.type || op2.type;
-//    }
-
-//    if(node->data.function.oper >= ADD_OPER) {
-//        // If binary func
-////        if(node->data.function.op2->type == FUNC_NODE_TYPE){
-////            RET_VAL temp = evalFuncNode(node->data.function.op2);
-////            node->data.function.op2->data.number.value = temp.value;
-////            node->data.function.op2->data.number.type = temp.type;
-////        }
-//
-//        op2 = eval(node->data.function.op2);
-//        result.type = node->data.function.op1->data.number.type || node->data.function.op2->data.number.type;
-//    }else {
-//        //if unary func
-//        result.type = node->data.function.op1->data.number.type;
-//    }
 
 
     // TODO     evalFuncNode:             populate result with the result of running the function on its operands.
@@ -373,9 +345,11 @@ RET_VAL evalFuncNode(AST_NODE *node) {
     switch (node->data.function.oper) {
         case READ_OPER:
             result = myRead();
+//            node = createNumberNode(result.value, result.type); //Convert node to Number Node to prevent reassigning value
             break;
         case RAND_OPER:
             result = myRand();
+//            node = createNumberNode(result.value, result.type); //Convert node to Number Node to prevent reassigning value
             break;
 
         case NEG_OPER:
@@ -470,15 +444,43 @@ RET_VAL evalCondNode(AST_NODE *node){
 }
 
 RET_VAL myRead(){
-    RET_VAL result = (RET_VAL){DOUBLE_TYPE, NAN};
+    RET_VAL result = (RET_VAL){INT_TYPE, NAN};
+
+    size_t BUFFER_SIZE = 128;
+    size_t lineSize;
+    char *buffer;
+    if ((buffer = calloc(BUFFER_SIZE, 1)) == NULL)
+        yyerror("Memory allocation failed!");
 
     printf("read := ");
-    double temp;
 
+    lineSize = getline(&buffer, &BUFFER_SIZE, stdin);
 
-    scanf("%f\n", &temp);
+    char c = buffer[0];
 
-    result.value = temp;
+    for(int i = 0; i < lineSize && c != '\n'; ++i ){
+        if((c < '0' || c > '9') && c != '.'){
+            printf("ERROR: Invalid number, try again.");
+            free(buffer);
+            return myRead();
+        }
+        if(c == '.'){
+            result.type = DOUBLE_TYPE;
+            c = buffer[i + 1];
+            for(++i; i < lineSize && c != '\n'; ++i){
+                if(( c < '0' || c > '9') ){
+                    printf("ERROR: Invalid number, try again.\n");
+                    free(buffer);
+                    return myRead();
+                }
+                c = buffer[i + 1];
+            }
+        }
+        c = buffer[i + 1];
+    }
+
+    char *endOfValue;
+    result.value = strtod(buffer, &endOfValue);
 
     //Determines the type based on the value rather than the format
 //    if(remainder(temp, 1) == 0 ){
@@ -486,7 +488,7 @@ RET_VAL myRead(){
 //    }else{
 //        result.type = DOUBLE_TYPE;
 //    }
-
+    free(buffer);
     return result;
 }
 
@@ -516,7 +518,8 @@ RET_VAL addOper(AST_NODE *op){
 RET_VAL subOper(AST_NODE *op){
     if(!op)
         return  (RET_VAL){INT_TYPE, NAN};
-    RET_VAL result = (RET_VAL){INT_TYPE, 0};
+    RET_VAL result = eval(op);
+    op = op->next;
 
     while(op){
         RET_VAL temp = eval(op);
@@ -546,7 +549,8 @@ RET_VAL multOper(AST_NODE *op){
 RET_VAL divOper(AST_NODE *op){
     if(!op)
         return  (RET_VAL){INT_TYPE, NAN};
-    RET_VAL result = (RET_VAL){INT_TYPE, 0};
+    RET_VAL result = eval(op);
+    op = op->next;
 
     while(op){
         RET_VAL temp = eval(op);
@@ -577,7 +581,7 @@ RET_VAL print(AST_NODE *node){
                 printf("DOUBLE_TYPE: %f ", result.value);
                 break;
             default:
-                yyerror("Invalid Type Error in printRetVal");
+                yyerror("Invalid Type Error in print\n");
                 break;
         }
         temp = temp->next;
@@ -614,6 +618,9 @@ RET_VAL printVerbose(AST_NODE *node) {
             }
             printf(") ");
             break;
+        case COND_NODE_TYPE:
+            printf("(COND: [UNFINISHED] ");
+            break;
         case SYMBOL_NODE_TYPE:
             printf("(SYMBOL: %s ", node->data.symbol.ident);
             print(getSymbolTableNode(node)->val);
@@ -639,7 +646,6 @@ RET_VAL evalSymbolNode(AST_NODE *symbolNode) {
         printf("WARNING: precision loss in the assignment for variable %s\n", symbolNode->data.symbol.ident);
         result.value = round(result.value);
     }
-    result.type = tempTableNode->type;
 
     return result;
 }
