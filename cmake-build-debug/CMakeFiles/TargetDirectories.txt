@@ -1,3 +1,3 @@
-/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-2/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-2/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/malakai.johnson642/Documents/COMP-232/CILisp/CI_LISP-Task-2/cmake-build-debug/CMakeFiles/cilisp.dir
+/Users/malakai.johnson642/Documents/COMP-232/CiLisp/CI_LISP-task-6/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/Users/malakai.johnson642/Documents/COMP-232/CiLisp/CI_LISP-task-6/cmake-build-debug/CMakeFiles/edit_cache.dir
+/Users/malakai.johnson642/Documents/COMP-232/CiLisp/CI_LISP-task-6/cmake-build-debug/CMakeFiles/cilisp.dir

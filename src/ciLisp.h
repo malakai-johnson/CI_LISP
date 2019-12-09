@@ -19,30 +19,35 @@ void yyerror(char *);
 // Enum of all operators.
 // must be in sync with funcs in resolveFunc()
 typedef enum oper {
-    NEG_OPER, // 0
+    READ_OPER, // 0
+    RAND_OPER,
+    //end of nonary
+
+    NEG_OPER,
     ABS_OPER,
     EXP_OPER,
     SQRT_OPER,
     LOG_OPER,
     EXP2_OPER,
     CBRT_OPER,
-    PRINT_OPER,
+    //end of unary
 
-    //              single op < ADD_OPER <= double op
-    ADD_OPER,
-    SUB_OPER,
-    MULT_OPER,
-    DIV_OPER,
     REMAINDER_OPER,
     POW_OPER,
     MAX_OPER,
     MIN_OPER,
     HYPOT_OPER,
-    READ_OPER,
-    RAND_OPER,
     EQUAL_OPER,
     LESS_OPER,
     GREATER_OPER,
+    //end of binary
+
+    ADD_OPER,
+    SUB_OPER,
+    MULT_OPER,
+    DIV_OPER,
+    PRINT_OPER,
+
     CUSTOM_OPER =255
 } OPER_TYPE;
 
@@ -54,13 +59,14 @@ OPER_TYPE resolveFunc(char *);
 typedef enum {
     NUM_NODE_TYPE,
     FUNC_NODE_TYPE,
-    SYMBOL_NODE_TYPE
+    SYMBOL_NODE_TYPE,
+    COND_NODE_TYPE
 } AST_NODE_TYPE;
 
 // Types of numeric values
 typedef enum {
     INT_TYPE = 0,
-    DOUBLE_TYPE,
+    DOUBLE_TYPE =1,
     NO_TYPE
 } NUM_TYPE;
 
@@ -76,6 +82,12 @@ typedef struct symbol_ast_node {
     char *ident;
 } SYMBOL_AST_NODE;
 
+typedef struct {
+    struct ast_node *cond;
+    struct ast_node *ifTrue;
+    struct ast_node *ifFalse;
+} COND_AST_NODE;
+
 // Values returned by eval function will be numbers with a type.
 // They have the same structure as a NUM_AST_NODE.
 // The line below allows us to give this struct another name for readability.
@@ -85,8 +97,7 @@ typedef NUM_AST_NODE RET_VAL;
 typedef struct {
     OPER_TYPE oper;
     char* ident; // only needed for custom functions
-    struct ast_node *op1;
-    struct ast_node *op2;
+    struct ast_node *opList;
 } FUNC_AST_NODE;
 
 typedef struct symbol_table_node {
@@ -105,13 +116,18 @@ typedef struct ast_node {
     union {
         NUM_AST_NODE number;
         FUNC_AST_NODE function;
+        COND_AST_NODE condition;
         SYMBOL_AST_NODE symbol;
     } data;
+    struct ast_node *next;
 } AST_NODE;
 
 AST_NODE *createNumberNode(double value, NUM_TYPE type);
 AST_NODE *createSymbolNode(char *ident);
-AST_NODE *createFunctionNode(char *funcName, AST_NODE *op1, AST_NODE *op2);
+AST_NODE *createFunctionNode(char *funcName, AST_NODE *opList);
+AST_NODE *createCondNode(AST_NODE *condition, AST_NODE *ifTrue, AST_NODE *ifFalse);
+bool checkParamList(char *funcName, int numOps, AST_NODE *opList);
+AST_NODE *addAstNode(AST_NODE *parent, AST_NODE *child);
 
 AST_NODE *addSymbolTable(SYMBOL_TABLE_NODE *symbolTable, AST_NODE *node);
 SYMBOL_TABLE_NODE *createSymbolTableNode(char *ident, AST_NODE *valueNode, NUM_TYPE type);
@@ -122,7 +138,18 @@ void freeNode(AST_NODE *node);
 RET_VAL eval(AST_NODE *node);
 RET_VAL evalNumNode(AST_NODE *node);
 RET_VAL evalFuncNode(AST_NODE *node);
+RET_VAL evalCondNode(AST_NODE *node);
+
+RET_VAL myRead();
+RET_VAL myRand();
+RET_VAL addOper(AST_NODE *op);
+RET_VAL subOper(AST_NODE *op);
+RET_VAL multOper(AST_NODE *op);
+RET_VAL divOper(AST_NODE *op);
+RET_VAL print(AST_NODE *node);
 RET_VAL evalSymbolNode(AST_NODE *node);
+SYMBOL_TABLE_NODE *getSymbolTableNode(AST_NODE *symbolNode);
+
 
 
 OPER_TYPE getOperType(char *funcName);
