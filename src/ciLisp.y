@@ -6,15 +6,15 @@
     double dval;
     char *sval;
     struct ast_node *astNode;
-    struct symbol_table_node *symbolTableNode;
+    struct table_node *tableNode;
 };
 
 %token <sval> FUNC SYMBOL TYPE
 %token <dval> INT DOUBLE
-%token LPAREN RPAREN LET COND EOL QUIT
+%token LPAREN RPAREN LET COND LAMBDA EOL QUIT
 
 %type <astNode> s_expr s_expr_list f_expr number type
-%type <symbolTableNode> let_list let_section let_elem
+%type <tableNode> let_list let_section let_elem arg_list
 
 %%
 
@@ -85,6 +85,13 @@ f_expr:
         fprintf(stderr, "yacc: s_expr ::= LPAREN FUNC expr RPAREN\n");
         $$ = createFunctionNode($2, NULL);
     }
+    | LPAREN SYMBOL s_expr_list RPAREN {
+        fprintf(stderr, "yacc: s_expr ::= LPAREN FUNC expr RPAREN\n");
+//        AST_NODE *temp = createFunctionNode($2, $3);
+//        TABLE_NODE *tempSymbolTableNode = createSymbolTableNode($2, NULL,
+//        $$ = createFunctionNode(createSymbolNode($2), $3);
+	$$ = createFunctionNode($2, $3);
+    }
 //
 //    | LPAREN FUNC s_expr s_expr RPAREN {
 //        fprintf(stderr, "yacc: s_expr ::= LPAREN FUNC expr expr RPAREN\n");
@@ -103,7 +110,7 @@ let_list:
 	}
 	| let_list let_elem {
         	fprintf(stderr, "yacc: let_list ::= let_list let_elem\n");
-        	addToSymbolTable($1, $2);
+        	addToTable($1, $2);
 		$$ = $1;
 	};
 let_elem:
@@ -115,6 +122,22 @@ let_elem:
 		fprintf(stderr, "yacc: let_elem ::= LPAREN type SYMBOL s_expr RPAREN\n");
 		$$ = createSymbolTableNode($3, $4, $2);
 	};
+	| LPAREN type SYMBOL LAMBDA LPAREN arg_list RPAREN s_expr RPAREN{
+		fprintf(stderr, "yacc: let_elem ::= LPAREN type SYMBOL LAMBDA LPAREN arg_list RPAREN s_expr RPAREN\n");
+		$$ = createFuncTableNode($3, $8, $2, $6);
+	};
+	| LPAREN SYMBOL LAMBDA LPAREN arg_list RPAREN s_expr RPAREN{
+		fprintf(stderr, "yacc: let_elem ::= LPAREN SYMBOL LAMBDA LPAREN arg_list RPAREN s_expr RPAREN\n");
+		$$ = createFuncTableNode($2, $7, NO_TYPE, $5);
+	};
+
+arg_list:
+	SYMBOL arg_list{
+		$$ = createArgNode($1, $2);
+	}
+	| SYMBOL {
+		$$ = createArgNode($1, NULL);
+	}
 
 type:
 	TYPE {

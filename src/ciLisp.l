@@ -13,6 +13,7 @@ double [+-]?{digit}+\.{digit}*
 func "neg"|"abs"|"exp"|"sqrt"|"add"|"sub"|"mult"|"div"|"remainder"|"log"|"pow"|"max"|"min"|"print"|"rand"|"read"|"equal"|"less"|"greater"
 type "int"|"double"
 cond "cond"
+lambda "lambda"
 symbol {letter}+
 
 %%
@@ -58,6 +59,12 @@ symbol {letter}+
         yylval.dval = strtod(yytext, NULL);
         fprintf(stderr, "lex: COND\n");
         return COND;
+}
+
+{lambda} {
+        yylval.dval = strtod(yytext, NULL);
+        fprintf(stderr, "lex: LAMBDA\n");
+        return LAMBDA;
 }
 
 {symbol} {

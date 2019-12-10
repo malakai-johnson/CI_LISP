@@ -48,8 +48,9 @@
      RPAREN = 264,
      LET = 265,
      COND = 266,
-     EOL = 267,
-     QUIT = 268
+     LAMBDA = 267,
+     EOL = 268,
+     QUIT = 269
    };
 #endif
 /* Tokens.  */
@@ -62,8 +63,9 @@
 #define RPAREN 264
 #define LET 265
 #define COND 266
-#define EOL 267
-#define QUIT 268
+#define LAMBDA 267
+#define EOL 268
+#define QUIT 269
 
 
 
@@ -75,10 +77,10 @@ typedef union YYSTYPE
     double dval;
     char *sval;
     struct ast_node *astNode;
-    struct symbol_table_node *symbolTableNode;
+    struct table_node *tableNode;
 }
 /* Line 1529 of yacc.c.  */
-#line 82 "/Users/malakai.johnson642/Downloads/CI_LISP-task-6/cmake-build-debug/ciLispParser.h"
+#line 84 "/Users/malakai.johnson642/Documents/COMP-232/CiLisp/CI_LISP-task-7&8/cmake-build-debug/ciLispParser.h"
 	YYSTYPE;
 # define yystype YYSTYPE /* obsolescent; will be withdrawn */
 # define YYSTYPE_IS_DECLARED 1
