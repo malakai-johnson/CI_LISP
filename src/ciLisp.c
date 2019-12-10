@@ -193,7 +193,7 @@ AST_NODE *createSymbolNode(char *ident) {
     return node;
 }
 
-AST_NODE *addSymbolTable(SYMBOL_TABLE_NODE *symbolTable, AST_NODE *node) {
+AST_NODE *addSymbolTable(TABLE_NODE *symbolTable, AST_NODE *node) {
     node->symbolTable = symbolTable;
 //    node->symbolTable->val->parent = node;
     return node;
@@ -204,19 +204,20 @@ AST_NODE *addAstNode(AST_NODE *parent, AST_NODE *child){
     return parent;
 }
 
-SYMBOL_TABLE_NODE *createSymbolTableNode(char *ident, AST_NODE *valueNode, NUM_TYPE type) {
+TABLE_NODE *createSymbolTableNode(char *ident, AST_NODE *valueNode, NUM_TYPE type) {
     //TODO createSymbolNode
-    SYMBOL_TABLE_NODE *node;
-    size_t nodeSize = sizeof(SYMBOL_TABLE_NODE);
+    TABLE_NODE *node;
+    size_t nodeSize = sizeof(TABLE_NODE);
     if ((node = calloc(nodeSize, 1)) == NULL)
         yyerror("Memory allocation failed!");
 
+    node->nodeType = SYMBOL_TABLE_NODE_TYPE;
     node->ident = ident;
     if(valueNode->type == FUNC_NODE_TYPE && valueNode->data.function.oper <= RAND_OPER){
         RET_VAL temp = eval(valueNode);
-        node->val = createNumberNode(temp.value, temp.type);
+        node->data.symbol.val = createNumberNode(temp.value, temp.type);
     }else {
-        node->val = valueNode;
+        node->data.symbol.val = valueNode;
     }
     node->type = type;
     node->next = NULL;
@@ -224,8 +225,45 @@ SYMBOL_TABLE_NODE *createSymbolTableNode(char *ident, AST_NODE *valueNode, NUM_T
     return node;
 }
 
+TABLE_NODE *createArgNode(char *ident, TABLE_NODE *next){
+    TABLE_NODE *node;
+    size_t nodeSize = sizeof(TABLE_NODE);
+    if ((node = calloc(nodeSize, 1)) == NULL)
+        yyerror("Memory allocation failed!");
 
-SYMBOL_TABLE_NODE *addToSymbolTable(SYMBOL_TABLE_NODE *parentNode, SYMBOL_TABLE_NODE *newNode) {
+    node->nodeType = SYMBOL_TABLE_NODE_TYPE;
+    node->ident = ident;
+
+    node->data.symbol.val = NULL;
+
+    node->type = NO_TYPE;
+    node->next = next;
+
+    return node;
+}
+
+TABLE_NODE *createFuncTableNode(char *ident, AST_NODE *customOper, NUM_TYPE type, TABLE_NODE *argList){
+    TABLE_NODE *node;
+    size_t nodeSize = sizeof(TABLE_NODE);
+    if ((node = calloc(nodeSize, 1)) == NULL)
+        yyerror("Memory allocation failed!");
+
+    node->nodeType = FUNC_TABLE_NODE_TYPE;
+    node->ident = ident;
+    node->type = type;
+
+//    node->data.function.argList = argList;
+
+    customOper->symbolTable = argList;
+    node->data.function.customOper = customOper;
+
+
+    node->next = NULL;
+
+    return node;
+}
+
+TABLE_NODE *addToTable(TABLE_NODE *parentNode, TABLE_NODE *newNode) {
 
     if (parentNode->ident == newNode->ident) {
         yyerror("Conflicting Symbol Definition");
@@ -239,13 +277,8 @@ SYMBOL_TABLE_NODE *addToSymbolTable(SYMBOL_TABLE_NODE *parentNode, SYMBOL_TABLE_
     }
     parentNode->next = newNode;
 
-//    if(parentNode->next == NULL){
-//        parentNode->next = &newNode;
-//    }else{
-//        addToSymbolTable(parentNode->next, newNode);
-//    }
-//    return parentNode;
 }
+
 
 
 // Called after execution is done on the base of the tree.
@@ -256,18 +289,26 @@ void freeNode(AST_NODE *node) {
     if (!node)
         return;
 
-    if (node->type == FUNC_NODE_TYPE) {
-        // Recursive calls to free child nodes
-        freeNode(node->data.function.opList);
+    switch(node->type){
+        case FUNC_NODE_TYPE:
+            // Recursive calls to free child nodes
+            freeNode(node->data.function.opList);
 
-        // Free up identifier string if necessary
-        if (node->data.function.oper == CUSTOM_OPER) {
-            free(node->data.function.ident);
-        }
-    }
-
-    if(node->type == SYMBOL_NODE_TYPE){
-        free(node->data.symbol.ident);
+            // Free up identifier string if necessary
+            if (node->data.function.oper == CUSTOM_OPER) {
+                free(node->data.function.ident);
+            }
+            break;
+        case SYMBOL_NODE_TYPE:
+            free(node->data.symbol.ident);
+            break;
+        case COND_NODE_TYPE:
+            freeNode(node->data.condition.cond);
+            freeNode(node->data.condition.ifTrue);
+            freeNode(node->data.condition.ifFalse);
+            break;
+        case NUM_NODE_TYPE:
+            break;
     }
 
     free(node);
@@ -418,9 +459,9 @@ RET_VAL evalFuncNode(AST_NODE *node) {
             result = divOper(node->data.function.opList);
             break;
 
-//        case CUSTOM_OPER:
-//            result.value =
-//            break;
+        case CUSTOM_OPER:
+            result = evalCustomFunc(node, node->data.function.opList);
+            break;
 
     }
 
@@ -429,6 +470,69 @@ RET_VAL evalFuncNode(AST_NODE *node) {
         result.value = floor(result.value);
 
     return result;
+}
+
+RET_VAL evalCustomFunc(AST_NODE *symbolNode, AST_NODE *opList){
+    RET_VAL result = (RET_VAL){NO_TYPE, NAN};
+//    RET_VAL result = (RET_VAL){INT_TYPE, 69};
+
+    TABLE_NODE *node = getSymbolTableNode(symbolNode);
+
+    if(node->nodeType != FUNC_TABLE_NODE_TYPE){
+        yyerror("ERROR: Invalid nodeType in evalCustomFunc");
+    }
+
+    AST_NODE *func = node->data.function.customOper;
+
+//    AST_NODE *op = opList;
+//    TABLE_NODE *arg = func->symbolTable;
+    TABLE_NODE *arg = createArgOpList(func->symbolTable, opList);
+
+    TABLE_NODE *originalSymbolTable = func->symbolTable;
+    func->symbolTable = arg;
+    result = eval(func);
+    func->symbolTable = originalSymbolTable;
+//    freeSymbolTable(arg);
+
+    return result;
+}
+
+TABLE_NODE *createArgOpList(TABLE_NODE *args, AST_NODE *opList){
+    TABLE_NODE *tempArg = args;
+    AST_NODE *tempOp = opList;
+
+    TABLE_NODE *result = createSymbolTableNode(tempArg->ident, tempOp, tempArg->type);
+    TABLE_NODE *tempResult = result;
+    tempArg = tempArg->next;
+    tempOp = tempOp->next;
+
+
+    while (tempArg && tempOp) {
+        tempResult->next = createSymbolTableNode(tempArg->ident, tempOp, tempArg->type);
+        tempResult = tempResult->next;
+        tempArg = tempArg->next;
+        tempOp = tempOp->next;
+    }
+
+    if(tempArg){
+        yyerror("ERROR: too few parameters for the custom function\n");
+    }else if (tempOp){
+        printf("WARNING: too many parameters for the custom function\n");
+    }
+
+    return result;
+}
+
+void freeSymbolTable(TABLE_NODE *symbolTable){
+    TABLE_NODE *temp = symbolTable;
+    TABLE_NODE *tempNext = temp->next;
+
+    while (temp){
+        free(temp);
+        temp = tempNext;
+//        if(temp->next)
+        tempNext = temp->next;
+    }
 }
 
 RET_VAL evalCondNode(AST_NODE *node){
@@ -534,7 +638,8 @@ RET_VAL subOper(AST_NODE *op){
 RET_VAL multOper(AST_NODE *op){
     if(!op)
         return  (RET_VAL){INT_TYPE, NAN};
-    RET_VAL result = (RET_VAL){INT_TYPE, 0};
+    RET_VAL result = eval(op);
+    op = op->next;
 
     while(op){
         RET_VAL temp = eval(op);
@@ -623,7 +728,7 @@ RET_VAL printVerbose(AST_NODE *node) {
             break;
         case SYMBOL_NODE_TYPE:
             printf("(SYMBOL: %s ", node->data.symbol.ident);
-            print(getSymbolTableNode(node)->val);
+            print(getSymbolTableNode(node)->data.symbol.val);
             printf(") ");
             break;
     }
@@ -638,9 +743,25 @@ RET_VAL evalSymbolNode(AST_NODE *symbolNode) {
 
     RET_VAL result = {INT_TYPE, NAN};
 
-    SYMBOL_TABLE_NODE *tempTableNode = getSymbolTableNode(symbolNode);
+    TABLE_NODE *tempTableNode = getSymbolTableNode(symbolNode);
 
-    result = eval(tempTableNode->val);
+
+    switch (tempTableNode->nodeType){
+        case SYMBOL_TABLE_NODE_TYPE:
+            result = eval(tempTableNode->data.symbol.val);
+            break;
+        case FUNC_TABLE_NODE_TYPE:
+
+            break;
+        default:
+            yyerror("ERROR: Invalid TABLE_NODE_TYPE in evalSymbolNode");
+            break;
+
+    }
+
+    if(tempTableNode->nodeType == SYMBOL_TABLE_NODE_TYPE) {
+        result = eval(tempTableNode->data.symbol.val);
+    }
 
     if (result.type == DOUBLE_TYPE && tempTableNode->type == INT_TYPE) {
         printf("WARNING: precision loss in the assignment for variable %s\n", symbolNode->data.symbol.ident);
@@ -650,28 +771,41 @@ RET_VAL evalSymbolNode(AST_NODE *symbolNode) {
     return result;
 }
 
-SYMBOL_TABLE_NODE *getSymbolTableNode(AST_NODE *symbolNode) {
+TABLE_NODE *getSymbolTableNode(AST_NODE *symbolNode) {
     //TODO evalSymbolNode
 
-    SYMBOL_TABLE_NODE *result = symbolNode->symbolTable;
+    char *ident;
+
+    if(symbolNode->type == SYMBOL_NODE_TYPE){
+        ident = symbolNode->data.symbol.ident;
+    } else if (symbolNode->type == FUNC_NODE_TYPE){
+        ident = symbolNode->data.function.ident;
+    }else{
+        yyerror("ERROR: Invalid AST_NODE_TYPE in getSymbolTableNode");
+    }
+
+//    TABLE_NODE *result = symbolNode->symbolTable;
+    TABLE_NODE *result = NULL;
     AST_NODE *tempNode = symbolNode;
     bool found = false;
 
-    while (!found && tempNode->parent != NULL) {
+//    while (!found && tempNode->parent != NULL) {
+    while (!found && tempNode != NULL) {
 
-        tempNode = tempNode->parent;
+//        tempNode = tempNode->parent;
         result = tempNode->symbolTable;
 
         while (!found && result != NULL) {
-            if (strcmp(symbolNode->data.symbol.ident, result->ident) == 0)
+            if (strcmp(ident, result->ident) == 0)
                 found = true;
             else
                 result = result->next;
         }
+        tempNode = tempNode->parent;
     }
 
     if (!found) {
-        yyerror("ERROR: Invalid Symbol");
+        yyerror("Invalid Symbol");
     }
 
     return result;
