@@ -170,7 +170,7 @@ bool checkParamList(char *funcName, int numOps, AST_NODE *opList){
         AST_NODE *temp = opList;
         for (int i = 0; i < numOps; ++i){
             if(!temp) {
-                yyerror("ERROR: too few parameters for the function <name>\n");
+                printf("ERROR: too few parameters for the function <%s>\n", funcName);
                 return false;
             }
             temp = temp->next;
@@ -383,6 +383,8 @@ RET_VAL evalFuncNode(AST_NODE *node) {
 
     tempNode = node->data.function.opList;
 
+    double temp;
+
     switch (node->data.function.oper) {
         case READ_OPER:
             result = myRead();
@@ -401,18 +403,25 @@ RET_VAL evalFuncNode(AST_NODE *node) {
             break;
         case EXP_OPER:
             result.value = exp(eval(tempNode).value);
+            result.type = DOUBLE_TYPE;
             break;
         case SQRT_OPER:
             result.value = sqrt(eval(tempNode).value);
+            result.type = DOUBLE_TYPE;
             break;
         case LOG_OPER:
             result.value = log(eval(tempNode).value);
+            result.type = DOUBLE_TYPE;
             break;
         case EXP2_OPER:
-            result.value = exp2(eval(tempNode).value);
+            temp = eval(tempNode).value;
+            result.value = exp2(temp);
+            if(temp < 0)
+                result.type = DOUBLE_TYPE;
             break;
         case CBRT_OPER:
             result.value = cbrt(eval(tempNode).value);
+            result.type = DOUBLE_TYPE;
             break;
 
         case REMAINDER_OPER:
@@ -429,6 +438,7 @@ RET_VAL evalFuncNode(AST_NODE *node) {
             break;
         case HYPOT_OPER:
             result.value = hypot(eval(tempNode).value, eval(tempNode->next).value);
+            result.type = DOUBLE_TYPE;
             break;
 
         case EQUAL_OPER:
@@ -515,9 +525,9 @@ TABLE_NODE *createArgOpList(TABLE_NODE *args, AST_NODE *opList){
     }
 
     if(tempArg){
-        yyerror("ERROR: too few parameters for the custom function\n");
+        printf("ERROR: too few parameters for the custom function");
     }else if (tempOp){
-        printf("WARNING: too many parameters for the custom function\n");
+        printf("WARNING: too many parameters for the custom function");
     }
 
     return result;
@@ -680,10 +690,10 @@ RET_VAL print(AST_NODE *node){
         result = eval(temp);
         switch (result.type) {
             case INT_TYPE:
-                printf("INT_TYPE: %ld ", (long) floor(result.value));
+                printf("Integer: %ld ", (long) floor(result.value));
                 break;
             case DOUBLE_TYPE:
-                printf("DOUBLE_TYPE: %f ", result.value);
+                printf("Double: %f ", result.value);
                 break;
             default:
                 yyerror("Invalid Type Error in print\n");
@@ -815,10 +825,10 @@ TABLE_NODE *getSymbolTableNode(AST_NODE *symbolNode) {
 void printRetVal(RET_VAL val) {
     switch (val.type) {
         case INT_TYPE:
-            printf("INT_TYPE: %ld", (long) floor(val.value));
+            printf("Integer: %ld", (long) floor(val.value));
             break;
         case DOUBLE_TYPE:
-            printf("DOUBLE_TYPE: %f", val.value);
+            printf("Double: %f", val.value);
             break;
         default:
             yyerror("Invalid Type Error in printRetVal");
